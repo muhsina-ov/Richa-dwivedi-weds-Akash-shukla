@@ -1,0 +1,13 @@
+# Enforce LF line endings for all text files across Windows, Linux, and macOS
+* text=auto eol=lf
+
+# Explicit binary files
+*.avif binary
+*.webp binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.mp4 binary
+*.mp3 binary
+*.wav binary
+*.ico binary

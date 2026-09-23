@@ -1,13 +1,13 @@
-// InviteStory - Tilak Invitation Service Worker (Instant Asset Caching)
-const CACHE_NAME = 'tilak-invite-v3';
+// InviteStory - Royal Tilak Invitation Service Worker
+const CACHE_NAME = 'royal-tilak-invite-v4';
 
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
   '/og-image.jpg',
-  '/assets/doors/1.avif',
-  '/assets/doors/1.webp',
+  '/assets/audio/wedding-melody.mp3',
   '/assets/doors/1.mp4',
+  '/assets/doors/1.webp',
   '/assets/gallery/photo-1.webp',
   '/assets/gallery/photo-2.webp',
   '/assets/gallery/photo-3.webp',
@@ -17,12 +17,12 @@ const PRECACHE_ASSETS = [
   '/assets/gallery/photo-7.webp',
 ];
 
-// Install Event - Cache Core Shell (best-effort, ignore missing hashed assets)
+// Install Event - Cache Core Shell
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(PRECACHE_ASSETS).catch((err) => {
-        console.warn('SW precache: some assets missing (expected with hashed build)', err);
+        console.warn('SW precache notice:', err);
         return Promise.resolve();
       });
     }).then(() => self.skipWaiting())
@@ -46,15 +46,16 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
-  // Skip cross-origin
+  
   if (url.origin !== location.origin) return;
-  // Navigation requests: network-first with offline fallback
+
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request).catch(() => caches.match('/index.html'))
     );
     return;
   }
+
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {
@@ -64,7 +65,7 @@ self.addEventListener('fetch', (event) => {
         if (
           networkResponse &&
           networkResponse.status === 200 &&
-          (event.request.url.includes('/assets/') || event.request.url.endsWith('.css') || event.request.url.endsWith('.js') || event.request.url.endsWith('.avif') || event.request.url.endsWith('.webp') || event.request.url.endsWith('.mp4'))
+          (event.request.url.includes('/assets/') || event.request.url.endsWith('.css') || event.request.url.endsWith('.js') || event.request.url.endsWith('.mp3') || event.request.url.endsWith('.webp') || event.request.url.endsWith('.mp4'))
         ) {
           const responseToCache = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
