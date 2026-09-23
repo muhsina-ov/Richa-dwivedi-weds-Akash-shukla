@@ -1,3 +1,0 @@
-# Cloudflare Pages / Workers redirects - SPA fallback handled by wrangler assets.not_found_handling
-# Keep for compatibility
-/*    /index.html   200
