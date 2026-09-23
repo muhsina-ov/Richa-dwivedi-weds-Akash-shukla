@@ -10,5 +10,13 @@ not_found_handling = "single-page-application"
 # Bindings (none needed for static, but keep file extensible)
 # For custom Worker logic you can add [vars] or [[kv_namespaces]] etc.
 
+# Custom domain for invitingyou.top
+# Creates route richa-weds-akash.invitingyou.top/* -> this Worker
+# Requires zone invitingyou.top to be on this Cloudflare account (Themelon.in@gmail.com)
+# If zone not yet added, add invitingyou.top to Cloudflare and update nameservers first
+[[routes]]
+pattern = "richa-weds-akash.invitingyou.top/*"
+zone_name = "invitingyou.top"
+
 [observability]
 enabled = true
