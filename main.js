@@ -5,7 +5,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   // Media & Canvas Elements
   const video = document.getElementById('doorVideo');
-  const videoSource = document.getElementById('videoSource');
   const staticCanvas = document.getElementById('staticFrameCanvas');
   const canvasCtx = staticCanvas.getContext('2d');
 
@@ -14,29 +13,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const lanternsContainer = document.getElementById('lanternsContainer');
   const contentScrollable = document.getElementById('contentScrollable');
 
-  // Controls & Buttons
-  const doorSelectBtn = document.getElementById('doorSelectBtn');
-  const editDetailsBtn = document.getElementById('editDetailsBtn');
-  const photoManagerBtn = document.getElementById('photoManagerBtn');
+  // Top Controls & Buttons
+  const flowerShowerBtn = document.getElementById('flowerShowerBtn');
   const audioToggleBtn = document.getElementById('audioToggleBtn');
   const equalizerBars = document.getElementById('equalizerBars');
   const audioStatusText = document.getElementById('audioStatusText');
   const replayBtn = document.getElementById('replayBtn');
   const whatsappRsvpBtn = document.getElementById('whatsappRsvpBtn');
   const addToCalendarBtn = document.getElementById('addToCalendarBtn');
-  const venueInlineMapBtn = document.getElementById('venueInlineMapBtn');
   const openMapBtn = document.getElementById('openMapBtn');
-
-  // Modals
-  const doorModal = document.getElementById('doorModal');
-  const closeDoorModal = document.getElementById('closeDoorModal');
-  const editorModal = document.getElementById('editorModal');
-  const closeEditorModal = document.getElementById('closeEditorModal');
   const mapModal = document.getElementById('mapModal');
   const closeMapModal = document.getElementById('closeMapModal');
-  const photoManagerModal = document.getElementById('photoManagerModal');
-  const closePhotoManager = document.getElementById('closePhotoManager');
-  const editorForm = document.getElementById('editorForm');
 
   // Audio Elements & State
   const weddingAudio = document.getElementById('weddingAudio');
@@ -46,7 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
   let isAudioMuted = false;
   let isPlaying = false;
   let hasOpened = false;
-  let currentDoorId = '1';
 
   // ==========================================================================
   // EVENT CONSTANTS
@@ -58,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // ==========================================================================
-  // AUDIO ENGINE (HTML5 AUDIO + WEB AUDIO RAAG SYNTHESIZER + YOUTUBE)
+  // AUDIO ENGINE (HTML5 AUDIO + WEB AUDIO RAAG SYNTHESIZER)
   // ==========================================================================
   function initAudioEngine() {
     if (!audioCtx) {
@@ -89,7 +75,6 @@ document.addEventListener('DOMContentLoaded', () => {
         osc.type = idx % 2 === 0 ? 'sine' : 'triangle';
         osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
 
-        // LFO for subtle Tanpura shimmer
         const lfo = audioCtx.createOscillator();
         const lfoGain = audioCtx.createGain();
         lfo.frequency.value = 0.2 + idx * 0.05;
@@ -130,19 +115,11 @@ document.addEventListener('DOMContentLoaded', () => {
     initAudioEngine();
     if (isAudioMuted) return;
 
-    const ytInput = document.getElementById('inputYoutubeUrl');
-    if (ytInput && ytInput.value.trim()) {
-      playYouTubeBackgroundMusic(ytInput.value.trim(), true);
-      updateEqualizerUI(true);
-      return;
-    }
-
     if (weddingAudio) {
       weddingAudio.volume = 0;
       const playPromise = weddingAudio.play();
       if (playPromise !== undefined) {
         playPromise.then(() => {
-          // Fade in audio gently
           let vol = 0;
           const fadeInterval = setInterval(() => {
             vol += 0.05;
@@ -155,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
           }, 80);
           updateEqualizerUI(true);
         }).catch((err) => {
-          console.log('HTML5 audio play blocked, falling back to Web Audio synth:', err);
+          console.log('HTML5 audio fallback to Web Audio synth:', err);
           startIndianSynthRaga();
           updateEqualizerUI(true);
         });
@@ -168,11 +145,11 @@ document.addEventListener('DOMContentLoaded', () => {
       weddingAudio.pause();
     }
     stopIndianSynthRaga();
-    toggleYouTubeAudioMute(true);
     updateEqualizerUI(false);
   }
 
   function updateEqualizerUI(isPlayingAudio) {
+    if (!equalizerBars || !audioStatusText) return;
     if (isPlayingAudio && !isAudioMuted) {
       equalizerBars.classList.add('playing');
       equalizerBars.classList.remove('muted');
@@ -184,101 +161,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  audioToggleBtn.addEventListener('click', () => {
-    isAudioMuted = !isAudioMuted;
-    if (isAudioMuted) {
-      pauseWeddingMusic();
-    } else {
-      playWeddingMusic();
-    }
-  });
-
-  // ==========================================================================
-  // TEXT & DETAILS PERSISTENCE
-  // ==========================================================================
-  const TEXT_STORE_KEY = 'royalTilakInviteV2';
-  const TEXT_FIELDS = [
-    { input: 'inputBride', display: 'displayBride' },
-    { input: 'inputGroom', display: 'displayGroom' },
-    { input: 'inputBrideParents', display: 'displayBrideParents' },
-    { input: 'inputGroomParents', display: 'displayGroomParents' },
-    { input: 'inputInvocation', display: 'displayInvocation' },
-    { input: 'inputBlessing', display: 'displayBlessing' },
-    { input: 'inputCeremonyEyebrow', display: 'displayCeremonyEyebrow' },
-    { input: 'inputCeremonyTitle', display: 'displayCeremonyTitle' },
-    { input: 'inputDateNum', display: 'displayDateNum' },
-    { input: 'inputMonth', display: 'displayMonth' },
-    { input: 'inputYear', display: 'displayYear' },
-    { input: 'inputDay', display: 'displayDay' },
-    { input: 'inputTime', display: 'displayTime' },
-    { input: 'inputVenue', display: 'displayVenue' },
-    { input: 'inputLocation', display: 'displayLocation' },
-    { input: 'inputFamilies', display: 'displayFamilies' },
-  ];
-
-  function loadSavedText() {
-    try {
-      const raw = localStorage.getItem(TEXT_STORE_KEY);
-      if (!raw) return;
-      const saved = JSON.parse(raw);
-      TEXT_FIELDS.forEach(({ input, display }) => {
-        if (typeof saved[input] === 'string' && saved[input] !== '') {
-          const inputEl = document.getElementById(input);
-          const displayEl = document.getElementById(display);
-          if (inputEl) inputEl.value = saved[input];
-          if (displayEl) displayEl.textContent = saved[input];
-        }
-      });
-      if (typeof saved.inputYoutubeUrl === 'string') {
-        const yt = document.getElementById('inputYoutubeUrl');
-        if (yt) yt.value = saved.inputYoutubeUrl;
+  if (audioToggleBtn) {
+    audioToggleBtn.addEventListener('click', () => {
+      isAudioMuted = !isAudioMuted;
+      if (isAudioMuted) {
+        pauseWeddingMusic();
+      } else {
+        playWeddingMusic();
       }
-      if (typeof saved.inputWhatsappNumber === 'string') {
-        const wa = document.getElementById('inputWhatsappNumber');
-        if (wa) wa.value = saved.inputWhatsappNumber;
-      }
-      syncAuxiliaryText();
-    } catch (e) {
-      console.warn('Saved text restore notice:', e);
-    }
+    });
   }
-
-  function saveCurrentText() {
-    try {
-      const payload = {};
-      TEXT_FIELDS.forEach(({ input }) => {
-        const el = document.getElementById(input);
-        if (el) payload[input] = el.value;
-      });
-      const yt = document.getElementById('inputYoutubeUrl');
-      if (yt) payload.inputYoutubeUrl = yt.value;
-      const wa = document.getElementById('inputWhatsappNumber');
-      if (wa) payload.inputWhatsappNumber = wa.value;
-      localStorage.setItem(TEXT_STORE_KEY, JSON.stringify(payload));
-    } catch (e) {
-      console.warn('Could not persist invitation text:', e);
-    }
-  }
-
-  function syncAuxiliaryText() {
-    const venue = document.getElementById('displayVenue');
-    const location = document.getElementById('displayLocation');
-    const mapTitle = document.getElementById('mapVenueTitle');
-    const mapAddress = document.getElementById('mapVenueAddress');
-    const mapLabel = document.getElementById('mapMockLabel');
-    const mapsLink = document.getElementById('openMapsLink');
-
-    if (venue && mapTitle) mapTitle.textContent = venue.textContent;
-    if (location && mapAddress) mapAddress.textContent = location.textContent;
-    if (venue && mapLabel) mapLabel.textContent = venue.textContent;
-
-    if (mapsLink && venue && location) {
-      const query = `${venue.textContent.trim()}, ${location.textContent.trim()}`;
-      mapsLink.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
-    }
-  }
-
-  loadSavedText();
 
   // ==========================================================================
   // 3D FLOATING LANTERNS ENGINE
@@ -371,13 +263,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  tapOverlay.addEventListener('click', openDoorInvitation);
-  tapOverlay.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      openDoorInvitation();
-    }
-  });
+  if (tapOverlay) {
+    tapOverlay.addEventListener('click', openDoorInvitation);
+    tapOverlay.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openDoorInvitation();
+      }
+    });
+  }
 
   video.addEventListener('timeupdate', () => {
     if (video.currentTime >= 5.8) {
@@ -414,10 +308,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 400);
   }
 
-  replayBtn.addEventListener('click', resetDoorState);
+  if (replayBtn) {
+    replayBtn.addEventListener('click', resetDoorState);
+  }
 
   // ==========================================================================
-  // SHIMMERING GOLD FOIL SCRATCH CARD ENGINE
+  // SHIMMERING GOLD FOIL SCRATCH CARD ENGINE (RETINA HIGH-DPI SCALED)
   // ==========================================================================
   const scratchCanvas = document.getElementById('scratchCanvas');
   const scratchHint = document.getElementById('scratchHint');
@@ -434,23 +330,32 @@ document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('scratchContainer');
     if (!container) return;
 
-    scratchCanvas.width = container.offsetWidth || 340;
-    scratchCanvas.height = container.offsetHeight || 140;
+    const rect = container.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    const w = rect.width || 340;
+    const h = rect.height || 140;
 
-    const grad = scratchCtx.createLinearGradient(0, 0, scratchCanvas.width, scratchCanvas.height);
-    grad.addColorStop(0, '#E8C86A');
-    grad.addColorStop(0.3, '#FFF2C6');
+    scratchCanvas.width = w * dpr;
+    scratchCanvas.height = h * dpr;
+    scratchCanvas.style.width = `${w}px`;
+    scratchCanvas.style.height = `${h}px`;
+
+    scratchCtx.scale(dpr, dpr);
+
+    const grad = scratchCtx.createLinearGradient(0, 0, w, h);
+    grad.addColorStop(0, '#ECC868');
+    grad.addColorStop(0.3, '#FFF4CE');
     grad.addColorStop(0.6, '#D4AF37');
     grad.addColorStop(1, '#996515');
 
     scratchCtx.fillStyle = grad;
-    scratchCtx.fillRect(0, 0, scratchCanvas.width, scratchCanvas.height);
+    scratchCtx.fillRect(0, 0, w, h);
 
     // Golden sparkles overlay
-    scratchCtx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+    scratchCtx.fillStyle = 'rgba(255, 255, 255, 0.45)';
     for (let i = 0; i < 160; i++) {
-      const x = Math.random() * scratchCanvas.width;
-      const y = Math.random() * scratchCanvas.height;
+      const x = Math.random() * w;
+      const y = Math.random() * h;
       const r = Math.random() * 2.2 + 0.5;
       scratchCtx.beginPath();
       scratchCtx.arc(x, y, r, 0, Math.PI * 2);
@@ -460,7 +365,7 @@ document.addEventListener('DOMContentLoaded', () => {
     scratchCtx.font = '700 12px "Cinzel", serif';
     scratchCtx.fillStyle = 'rgba(74, 14, 28, 0.9)';
     scratchCtx.textAlign = 'center';
-    scratchCtx.fillText('✦ SCRATCH GOLD FOIL TO REVEAL DATE ✦', scratchCanvas.width / 2, scratchCanvas.height / 2 + 4);
+    scratchCtx.fillText('✦ SCRATCH GOLD FOIL TO REVEAL DATE ✦', w / 2, h / 2 + 4);
   }
 
   function scratchAt(x, y) {
@@ -468,11 +373,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     scratchCtx.globalCompositeOperation = 'destination-out';
     scratchCtx.beginPath();
-    scratchCtx.arc(x, y, 24, 0, Math.PI * 2);
+    scratchCtx.arc(x, y, 26, 0, Math.PI * 2);
     scratchCtx.fill();
 
     dragCount++;
-    if (dragCount % 8 === 0) {
+    if (dragCount % 6 === 0) {
       checkScratchPercentage();
     }
   }
@@ -496,20 +401,22 @@ document.addEventListener('DOMContentLoaded', () => {
   function checkScratchPercentage() {
     if (hasScratchedCleared || !scratchCtx) return;
 
-    const imgData = scratchCtx.getImageData(0, 0, scratchCanvas.width, scratchCanvas.height);
+    const w = scratchCanvas.width;
+    const h = scratchCanvas.height;
+    const imgData = scratchCtx.getImageData(0, 0, w, h);
     const pixels = imgData.data;
     let transparentCount = 0;
 
-    for (let i = 3; i < pixels.length; i += 16) {
+    for (let i = 3; i < pixels.length; i += 32) {
       if (pixels[i] === 0) {
         transparentCount++;
       }
     }
 
-    const totalSampled = pixels.length / 16;
+    const totalSampled = pixels.length / 32;
     const ratio = transparentCount / totalSampled;
 
-    if (ratio > 0.32) {
+    if (ratio > 0.30) {
       revealDateFully();
     }
   }
@@ -522,7 +429,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (scratchHint) scratchHint.style.opacity = '0';
     if (quickRevealBtn) quickRevealBtn.style.display = 'none';
 
-    triggerConfetti();
+    triggerPushpaVrishti();
   }
 
   if (scratchCanvas) {
@@ -554,72 +461,108 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ==========================================================================
-  // GOLD & ROSE CONFETTI CELEBRATION ENGINE
+  // PUSHPA VRISHTI (ROSE & MARIGOLD PETAL SHOWER PHYSICS ENGINE)
   // ==========================================================================
   const confettiCanvas = document.getElementById('confettiCanvas');
   let confettiCtx = null;
-  let confettiParticles = [];
-  let confettiAnimationId = null;
+  let petals = [];
+  let petalAnimationId = null;
 
-  function triggerConfetti() {
+  function triggerPushpaVrishti() {
     if (!confettiCanvas) return;
     confettiCtx = confettiCanvas.getContext('2d');
 
     const container = document.getElementById('invitationOverlay');
-    confettiCanvas.width = container ? container.offsetWidth : window.innerWidth;
-    confettiCanvas.height = container ? container.offsetHeight : window.innerHeight;
+    const w = container ? container.offsetWidth : window.innerWidth;
+    const h = container ? container.offsetHeight : window.innerHeight;
 
-    const colors = ['#FBF2C0', '#D4AF37', '#ECC868', '#FFFFFF', '#80182E', '#996515'];
-    confettiParticles = [];
+    confettiCanvas.width = w;
+    confettiCanvas.height = h;
 
-    for (let i = 0; i < 85; i++) {
-      confettiParticles.push({
-        x: confettiCanvas.width / 2 + (Math.random() * 80 - 40),
-        y: confettiCanvas.height * 0.3,
-        vx: (Math.random() - 0.5) * 14,
-        vy: (Math.random() * -11) - 4,
-        size: Math.random() * 7 + 3,
-        color: colors[Math.floor(Math.random() * colors.length)],
+    const petalColors = [
+      { fill: '#D11D45', border: '#8A0E2A', type: 'rose' },
+      { fill: '#FF5C77', border: '#C01A3E', type: 'rose' },
+      { fill: '#FFB800', border: '#D48800', type: 'marigold' },
+      { fill: '#FF8A00', border: '#C95500', type: 'marigold' },
+      { fill: '#FBF2C0', border: '#D4AF37', type: 'gold-foil' },
+    ];
+
+    petals = [];
+    const count = 90;
+
+    for (let i = 0; i < count; i++) {
+      const pColor = petalColors[Math.floor(Math.random() * petalColors.length)];
+      petals.push({
+        x: Math.random() * w,
+        y: Math.random() * -h * 0.4,
+        vx: (Math.random() - 0.5) * 4,
+        vy: Math.random() * 3 + 2.5,
+        size: Math.random() * 10 + 8,
+        color: pColor.fill,
+        borderColor: pColor.border,
+        type: pColor.type,
         rotation: Math.random() * 360,
-        rotationSpeed: (Math.random() - 0.5) * 9,
+        rotationSpeed: (Math.random() - 0.5) * 4,
+        swaySpeed: Math.random() * 0.05 + 0.02,
+        swayOffset: Math.random() * Math.PI * 2,
         opacity: 1,
       });
     }
 
-    if (confettiAnimationId) cancelAnimationFrame(confettiAnimationId);
-    animateConfetti();
+    if (petalAnimationId) cancelAnimationFrame(petalAnimationId);
+    animatePetals();
   }
 
-  function animateConfetti() {
+  function animatePetals() {
     if (!confettiCtx) return;
     confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
 
-    let activeParticles = 0;
+    let activeCount = 0;
 
-    confettiParticles.forEach((p) => {
-      p.x += p.vx;
+    petals.forEach((p) => {
       p.y += p.vy;
-      p.vy += 0.28;
+      p.x += p.vx + Math.sin(p.y * p.swaySpeed + p.swayOffset) * 1.5;
       p.rotation += p.rotationSpeed;
-      p.opacity -= 0.007;
 
-      if (p.opacity > 0) {
-        activeParticles++;
+      if (p.y > confettiCanvas.height * 0.65) {
+        p.opacity -= 0.012;
+      }
+
+      if (p.opacity > 0 && p.y < confettiCanvas.height + 20) {
+        activeCount++;
         confettiCtx.save();
         confettiCtx.translate(p.x, p.y);
         confettiCtx.rotate((p.rotation * Math.PI) / 180);
         confettiCtx.globalAlpha = Math.max(0, p.opacity);
-        confettiCtx.fillStyle = p.color;
-        confettiCtx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+
+        if (p.type === 'rose' || p.type === 'marigold') {
+          // Curved natural petal shape
+          confettiCtx.beginPath();
+          confettiCtx.ellipse(0, 0, p.size * 0.5, p.size * 0.8, 0, 0, Math.PI * 2);
+          confettiCtx.fillStyle = p.color;
+          confettiCtx.fill();
+          confettiCtx.lineWidth = 0.5;
+          confettiCtx.strokeStyle = p.borderColor;
+          confettiCtx.stroke();
+        } else {
+          // Gilded square foil
+          confettiCtx.fillStyle = p.color;
+          confettiCtx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+        }
+
         confettiCtx.restore();
       }
     });
 
-    if (activeParticles > 0) {
-      confettiAnimationId = requestAnimationFrame(animateConfetti);
+    if (activeCount > 0) {
+      petalAnimationId = requestAnimationFrame(animatePetals);
     } else {
       confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
     }
+  }
+
+  if (flowerShowerBtn) {
+    flowerShowerBtn.addEventListener('click', triggerPushpaVrishti);
   }
 
   // ==========================================================================
@@ -659,226 +602,18 @@ document.addEventListener('DOMContentLoaded', () => {
   setInterval(updateCountdown, 1000);
 
   // ==========================================================================
-  // PHOTO GALLERY (7 SLOTS, INDEXEDDB, LIGHTBOX)
+  // FULLSCREEN PHOTO LIGHTBOX
   // ==========================================================================
-  const GALLERY_META = [
-    { slot: 1, name: '1 · Hero Couple Photo', label: 'Together', alt: 'Richa Dwivedi and Akash Shukla — main couple photo' },
-    { slot: 2, name: '2 · Bride Photo', label: 'The Bride', alt: 'Richa Dwivedi — bride photo' },
-    { slot: 3, name: '3 · Groom Photo', label: 'The Groom', alt: 'Akash Shukla — groom photo' },
-    { slot: 4, name: '4 · Couple Portrait', label: 'Cherished', alt: 'Richa Dwivedi and Akash Shukla — couple photo' },
-    { slot: 5, name: '5 · Family Blessing', label: 'Family Blessings', alt: 'Family photo' },
-    { slot: 6, name: '6 · Celebration Moment', label: 'Celebration', alt: 'Family and couple photo' },
-    { slot: 7, name: '7 · Cherished Memories', label: 'Memories', alt: 'Additional cherished memory photo' },
+  const GALLERY_PHOTOS = [
+    { src: '/assets/gallery/photo-1.webp', label: 'Together · Richa & Akash' },
+    { src: '/assets/gallery/photo-2.webp', label: 'The Bride · Richa' },
+    { src: '/assets/gallery/photo-3.webp', label: 'The Groom · Akash' },
+    { src: '/assets/gallery/photo-4.webp', label: 'Cherished Moments' },
+    { src: '/assets/gallery/photo-5.webp', label: 'Family Blessings' },
+    { src: '/assets/gallery/photo-6.webp', label: 'Celebration of Joy' },
+    { src: '/assets/gallery/photo-7.webp', label: 'Cherished Memories' },
   ];
 
-  const DB_NAME = 'tilak-invite-gallery';
-  const DB_STORE = 'photos';
-  const GALLERY_STATE_KEY = 'tilakGalleryStateV2';
-
-  const customUrls = new Array(7).fill(null);
-  const slotState = new Array(7).fill('default');
-
-  function defaultSrc(i) {
-    return `/assets/gallery/photo-${i + 1}.webp`;
-  }
-
-  function getEffectiveSrc(i) {
-    if (customUrls[i]) return customUrls[i];
-    if (slotState[i] === 'empty') return null;
-    return defaultSrc(i);
-  }
-
-  function isSlotVisible(i) {
-    return getEffectiveSrc(i) !== null;
-  }
-
-  function loadGalleryState() {
-    try {
-      const raw = localStorage.getItem(GALLERY_STATE_KEY);
-      if (!raw) return;
-      const saved = JSON.parse(raw);
-      for (let i = 0; i < 7; i++) {
-        if (saved[i + 1] === 'empty' && !customUrls[i]) slotState[i] = 'empty';
-      }
-    } catch (e) {
-      console.warn('Gallery state restore notice:', e);
-    }
-  }
-
-  function saveGalleryState() {
-    try {
-      const payload = {};
-      for (let i = 0; i < 7; i++) {
-        payload[i + 1] = slotState[i];
-      }
-      localStorage.setItem(GALLERY_STATE_KEY, JSON.stringify(payload));
-    } catch (e) {
-      console.warn('Gallery state save notice:', e);
-    }
-  }
-
-  function openDb() {
-    return new Promise((resolve, reject) => {
-      const req = indexedDB.open(DB_NAME, 1);
-      req.onupgradeneeded = () => {
-        if (!req.result.objectStoreNames.contains(DB_STORE)) {
-          req.result.createObjectStore(DB_STORE);
-        }
-      };
-      req.onsuccess = () => resolve(req.result);
-      req.onerror = () => reject(req.error);
-    });
-  }
-
-  async function idbGet(key) {
-    const db = await openDb();
-    return new Promise((resolve, reject) => {
-      const tx = db.transaction(DB_STORE, 'readonly');
-      const req = tx.objectStore(DB_STORE).get(key);
-      req.onsuccess = () => resolve(req.result || null);
-      req.onerror = () => reject(req.error);
-    });
-  }
-
-  async function idbPut(key, value) {
-    const db = await openDb();
-    return new Promise((resolve, reject) => {
-      const tx = db.transaction(DB_STORE, 'readwrite');
-      tx.objectStore(DB_STORE).put(value, key);
-      tx.oncomplete = () => resolve();
-      tx.onerror = () => reject(tx.error);
-    });
-  }
-
-  async function idbDel(key) {
-    const db = await openDb();
-    return new Promise((resolve, reject) => {
-      const tx = db.transaction(DB_STORE, 'readwrite');
-      tx.objectStore(DB_STORE).delete(key);
-      tx.oncomplete = () => resolve();
-      tx.onerror = () => reject(tx.error);
-    });
-  }
-
-  function applySlotToDom(i) {
-    const src = getEffectiveSrc(i);
-    const meta = GALLERY_META[i];
-
-    const item = document.querySelector(`.gallery-item[data-gallery-index="${i}"]`);
-    if (item) {
-      const img = item.querySelector('.gallery-img');
-      if (src) {
-        item.classList.remove('is-empty');
-        item.style.display = '';
-        if (img && img.getAttribute('src') !== src) {
-          img.src = src;
-          img.alt = meta.alt;
-        }
-      } else {
-        item.classList.add('is-empty');
-        item.style.display = 'none';
-      }
-    }
-
-    updatePhotoSlotPreview(i);
-  }
-
-  function updatePhotoSlotPreview(i) {
-    const photoSlotsGrid = document.getElementById('photoSlotsGrid');
-    if (!photoSlotsGrid) return;
-    const preview = photoSlotsGrid.querySelector(`[data-preview="${i}"]`);
-    if (!preview) return;
-
-    const src = getEffectiveSrc(i);
-    let img = preview.querySelector('img');
-    if (src) {
-      if (!img) {
-        img = document.createElement('img');
-        img.alt = GALLERY_META[i].alt;
-        preview.appendChild(img);
-      }
-      img.src = src;
-    } else if (img) {
-      img.remove();
-    }
-  }
-
-  function buildPhotoSlots() {
-    const photoSlotsGrid = document.getElementById('photoSlotsGrid');
-    if (!photoSlotsGrid) return;
-    photoSlotsGrid.innerHTML = '';
-
-    GALLERY_META.forEach((meta, idx) => {
-      const card = document.createElement('div');
-      card.className = 'photo-slot-card';
-
-      const src = getEffectiveSrc(idx);
-      card.innerHTML = `
-        <div class="photo-slot-preview" data-preview="${idx}">
-          ${src ? `<img src="${src}" alt="${meta.alt}">` : `<button type="button" class="photo-slot-empty" data-action="upload" data-index="${idx}">+ Photo ${idx + 1}</button>`}
-        </div>
-        <div class="photo-slot-meta">
-          <div class="photo-slot-title">${meta.name}</div>
-          <div class="photo-slot-actions">
-            <label class="photo-upload-btn">
-              Upload
-              <input type="file" accept="image/*" style="display:none" data-upload-index="${idx}">
-            </label>
-            <button type="button" class="photo-remove-btn" data-remove-index="${idx}">Reset</button>
-          </div>
-        </div>
-      `;
-
-      photoSlotsGrid.appendChild(card);
-    });
-
-    // Wire upload listeners
-    photoSlotsGrid.querySelectorAll('[data-upload-index]').forEach((input) => {
-      input.addEventListener('change', async (e) => {
-        if (e.target.files && e.target.files[0]) {
-          const index = Number(e.target.dataset.uploadIndex);
-          const file = e.target.files[0];
-          const blobUrl = URL.createObjectURL(file);
-          customUrls[index] = blobUrl;
-          slotState[index] = 'default';
-          await idbPut(index + 1, file);
-          saveGalleryState();
-          applySlotToDom(index);
-        }
-      });
-    });
-
-    photoSlotsGrid.querySelectorAll('[data-remove-index]').forEach((btn) => {
-      btn.addEventListener('click', async (e) => {
-        const index = Number(e.target.dataset.removeIndex);
-        customUrls[index] = null;
-        slotState[index] = 'default';
-        await idbDel(index + 1);
-        saveGalleryState();
-        applySlotToDom(index);
-      });
-    });
-  }
-
-  async function hydrateGallery() {
-    loadGalleryState();
-    try {
-      for (let i = 0; i < 7; i++) {
-        const blob = await idbGet(i + 1);
-        if (blob) {
-          customUrls[i] = URL.createObjectURL(blob);
-          slotState[i] = 'default';
-        }
-      }
-    } catch (e) {
-      console.warn('IndexedDB gallery notice:', e);
-    }
-    saveGalleryState();
-    for (let i = 0; i < 7; i++) applySlotToDom(i);
-    buildPhotoSlots();
-  }
-
-  // Lightbox
   const lightbox = document.getElementById('lightbox');
   const lightboxImg = document.getElementById('lightboxImg');
   const lightboxCounter = document.getElementById('lightboxCounter');
@@ -888,34 +623,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const lightboxNext = document.getElementById('lightboxNext');
 
   let lightboxOpen = false;
-  let lightboxSlot = 0;
-
-  function visibleSlots() {
-    const list = [];
-    for (let i = 0; i < 7; i++) {
-      if (isSlotVisible(i)) list.push(i);
-    }
-    return list;
-  }
+  let currentPhotoIndex = 0;
 
   function renderLightbox() {
-    const src = getEffectiveSrc(lightboxSlot);
-    const meta = GALLERY_META[lightboxSlot];
-    const list = visibleSlots();
-    const position = list.indexOf(lightboxSlot) + 1;
-
-    if (src) {
-      lightboxImg.src = src;
-      lightboxImg.alt = meta.alt;
+    const photo = GALLERY_PHOTOS[currentPhotoIndex];
+    if (photo && lightboxImg) {
+      lightboxImg.src = photo.src;
+      lightboxCounter.textContent = `${currentPhotoIndex + 1} / ${GALLERY_PHOTOS.length}`;
+      lightboxLabel.textContent = photo.label;
     }
-
-    lightboxCounter.textContent = `${position} / ${list.length}`;
-    lightboxLabel.textContent = meta.label;
   }
 
-  function openLightbox(slotIndex) {
-    if (!isSlotVisible(slotIndex)) return;
-    lightboxSlot = slotIndex;
+  function openLightbox(index) {
+    currentPhotoIndex = index % GALLERY_PHOTOS.length;
     lightboxOpen = true;
     lightbox.classList.add('is-open');
     lightbox.setAttribute('aria-hidden', 'false');
@@ -926,16 +646,11 @@ document.addEventListener('DOMContentLoaded', () => {
     lightboxOpen = false;
     lightbox.classList.remove('is-open');
     lightbox.setAttribute('aria-hidden', 'true');
-    lightboxImg.src = '';
+    if (lightboxImg) lightboxImg.src = '';
   }
 
   function stepLightbox(direction) {
-    const list = visibleSlots();
-    if (!list.length) return;
-    let pos = list.indexOf(lightboxSlot);
-    if (pos < 0) pos = 0;
-    pos = (pos + direction + list.length) % list.length;
-    lightboxSlot = list[pos];
+    currentPhotoIndex = (currentPhotoIndex + direction + GALLERY_PHOTOS.length) % GALLERY_PHOTOS.length;
     renderLightbox();
   }
 
@@ -964,168 +679,57 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'ArrowRight') stepLightbox(1);
   });
 
-  hydrateGallery();
-
   // ==========================================================================
-  // DOOR STYLE SWITCHER
+  // QUICK BLESSINGS & WHATSAPP RSVP DISPATCH
   // ==========================================================================
-  function switchDoorStyle(doorId) {
-    if (currentDoorId === doorId) return;
+  let selectedBlessingText = 'Heartiest Congratulations to Richa & Akash! 💐 Wishing you eternal happiness, love and togetherness.';
 
-    currentDoorId = doorId;
-    resetDoorState();
-
-    const videoPath = `/assets/doors/${doorId}.mp4`;
-    videoSource.src = videoPath;
-    video.load();
-
-    document.querySelectorAll('.door-option-card').forEach((card) => {
-      card.classList.toggle('active', card.dataset.door === doorId);
-    });
-
-    doorModal.classList.add('hidden');
-  }
-
-  doorSelectBtn.addEventListener('click', () => doorModal.classList.remove('hidden'));
-  closeDoorModal.addEventListener('click', () => doorModal.classList.add('hidden'));
-
-  document.querySelectorAll('.door-option-card').forEach((card) => {
-    card.addEventListener('click', () => {
-      switchDoorStyle(card.dataset.door);
-    });
-  });
-
-  // ==========================================================================
-  // DETAILS EDITOR
-  // ==========================================================================
-  editDetailsBtn.addEventListener('click', () => editorModal.classList.remove('hidden'));
-  closeEditorModal.addEventListener('click', () => editorModal.classList.add('hidden'));
-  photoManagerBtn.addEventListener('click', () => photoManagerModal.classList.remove('hidden'));
-  closePhotoManager.addEventListener('click', () => photoManagerModal.classList.add('hidden'));
-
-  editorForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    TEXT_FIELDS.forEach(({ input, display }) => {
-      const inputEl = document.getElementById(input);
-      const displayEl = document.getElementById(display);
-      if (inputEl && displayEl) {
-        displayEl.textContent = inputEl.value;
-      }
-    });
-
-    syncAuxiliaryText();
-    saveCurrentText();
-
-    const ytUrlInput = document.getElementById('inputYoutubeUrl');
-    if (ytUrlInput && ytUrlInput.value.trim()) {
-      playWeddingMusic();
-    }
-
-    editorModal.classList.add('hidden');
-  });
-
-  // ==========================================================================
-  // YOUTUBE MUSIC ENGINE
-  // ==========================================================================
-  let ytPlayerIframe = null;
-
-  function extractYouTubeId(url) {
-    if (!url) return '';
-    url = url.trim();
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-    const match = url.match(regExp);
-    if (match && match[2] && match[2].length === 11) {
-      return match[2];
-    }
-    if (url.length === 11) return url;
-    return '';
-  }
-
-  function playYouTubeBackgroundMusic(url, autoPlay = true) {
-    const videoId = extractYouTubeId(url);
-    if (!videoId) return;
-    const container = document.getElementById('youtubePlayerContainer');
-    if (!container) return;
-
-    const mute = isAudioMuted ? 1 : 0;
-    const playParam = autoPlay ? 1 : 0;
-    container.innerHTML = `<iframe id="ytIframe" width="200" height="200"
-      src="https://www.youtube.com/embed/${videoId}?enablejsapi=1&autoplay=${playParam}&loop=1&playlist=${videoId}&controls=0&mute=${mute}"
-      frameborder="0" allow="autoplay"></iframe>`;
-
-    ytPlayerIframe = document.getElementById('ytIframe');
-  }
-
-  function toggleYouTubeAudioMute(isMuted) {
-    if (!ytPlayerIframe || !ytPlayerIframe.contentWindow) return;
-    const command = isMuted ? 'mute' : 'unMute';
-    try {
-      ytPlayerIframe.contentWindow.postMessage(JSON.stringify({
-        event: 'command',
-        func: command,
-        args: [],
-      }), '*');
-    } catch (e) {
-      console.warn('YouTube command notice:', e);
-    }
-  }
-
-  // ==========================================================================
-  // MAP MODAL & ACTIONS
-  // ==========================================================================
-  if (venueInlineMapBtn) {
-    venueInlineMapBtn.addEventListener('click', () => {
-      syncAuxiliaryText();
-      mapModal.classList.remove('hidden');
-    });
-  }
-
-  openMapBtn.addEventListener('click', () => {
-    syncAuxiliaryText();
-    mapModal.classList.remove('hidden');
-  });
-  closeMapModal.addEventListener('click', () => mapModal.classList.add('hidden'));
-
-  [doorModal, editorModal, mapModal, photoManagerModal].forEach((modal) => {
-    if (!modal) return;
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        modal.classList.add('hidden');
+  const blessingChips = document.querySelectorAll('.blessing-chip');
+  blessingChips.forEach((chip) => {
+    chip.addEventListener('click', () => {
+      blessingChips.forEach((c) => c.classList.remove('active'));
+      chip.classList.add('active');
+      if (chip.dataset.blessing) {
+        selectedBlessingText = chip.dataset.blessing;
       }
     });
   });
 
-  // ==========================================================================
-  // WHATSAPP RSVP & BLESSINGS
-  // ==========================================================================
   if (whatsappRsvpBtn) {
     whatsappRsvpBtn.addEventListener('click', () => {
-      const bride = document.getElementById('displayBride').innerText.trim();
-      const groom = document.getElementById('displayGroom').innerText.trim();
-      const waInput = document.getElementById('inputWhatsappNumber');
-      const waNumber = (waInput && waInput.value.trim()) ? waInput.value.trim().replace(/[^0-9]/g, '') : '919876543210';
-
-      const message = encodeURIComponent(`Heartiest Congratulations to ${bride} & ${groom}! 💐✨\n\nWe are delighted to receive your Tilak & Engagement invitation for 18 October 2026. Sending our warmest blessings and best wishes for your beautiful journey together! 🎉🪔`);
+      const waNumber = '919876543210';
+      const message = encodeURIComponent(`💐 Royal Tilak & Engagement Wishes 💐\n\n${selectedBlessingText}\n\n— Sent from Digital Invitation for Richa & Akash (18 October 2026) ✨🪔`);
       const waUrl = `https://wa.me/${waNumber}?text=${message}`;
       window.open(waUrl, '_blank', 'noopener,noreferrer');
     });
   }
 
   // ==========================================================================
-  // ADD TO GOOGLE / APPLE CALENDAR
+  // MAP MODAL & CALENDAR INTEGRATION
   // ==========================================================================
-  addToCalendarBtn.addEventListener('click', () => {
-    const bride = document.getElementById('displayBride').innerText.trim();
-    const groom = document.getElementById('displayGroom').innerText.trim();
-    const venue = document.getElementById('displayVenue').innerText.trim();
-    const location = document.getElementById('displayLocation').innerText.trim();
+  if (openMapBtn) {
+    openMapBtn.addEventListener('click', () => {
+      if (mapModal) mapModal.classList.remove('hidden');
+    });
+  }
+  if (closeMapModal) {
+    closeMapModal.addEventListener('click', () => {
+      if (mapModal) mapModal.classList.add('hidden');
+    });
+  }
+  if (mapModal) {
+    mapModal.addEventListener('click', (e) => {
+      if (e.target === mapModal) mapModal.classList.add('hidden');
+    });
+  }
 
-    const title = encodeURIComponent(`Engagement (Tilak) of ${bride} & ${groom}`);
-    const details = encodeURIComponent(`With the blessings of our families — join us for the Engagement (Tilak) ceremony of ${bride} and ${groom}.`);
-    const loc = encodeURIComponent(`${venue}, ${location}`);
-
-    const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&location=${loc}&dates=${EVENT.calendarStart}/${EVENT.calendarEnd}`;
-    window.open(googleCalendarUrl, '_blank', 'noopener,noreferrer');
-  });
+  if (addToCalendarBtn) {
+    addToCalendarBtn.addEventListener('click', () => {
+      const title = encodeURIComponent('Engagement (Tilak) of Richa Dwivedi & Akash Shukla');
+      const details = encodeURIComponent('With the blessings of our families — join us for the Engagement (Tilak) ceremony of Richa Dwivedi and Akash Shukla.');
+      const loc = encodeURIComponent('Yamuna Velly, Near Aliyapur Toll Plaza');
+      const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&location=${loc}&dates=${EVENT.calendarStart}/${EVENT.calendarEnd}`;
+      window.open(googleCalendarUrl, '_blank', 'noopener,noreferrer');
+    });
+  }
 });

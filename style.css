@@ -122,8 +122,8 @@ body {
 .ambient-stars {
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(rgba(251, 242, 192, 0.25) 1px, transparent 1px);
-  background-size: 40px 40px;
+  background-image: radial-gradient(rgba(251, 242, 192, 0.25) 1.2px, transparent 1.2px);
+  background-size: 38px 38px;
   opacity: 0.35;
 }
 
@@ -133,7 +133,7 @@ body {
 }
 
 /* ==========================================================================
-   TOP CONTROLS & EQUALIZER
+   TOP CONTROLS & EQUALIZER (PRISTINE GUEST HEADER)
    ========================================================================== */
 .top-controls {
   position: fixed;
@@ -156,7 +156,7 @@ body {
 
 .brand-tag {
   font-family: var(--font-serif);
-  font-size: 0.76rem;
+  font-size: 0.8rem;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--color-gold-light);
@@ -198,7 +198,7 @@ body {
   font-size: 0.72rem;
   font-weight: 500;
   letter-spacing: 0.8px;
-  padding: 8px 13px;
+  padding: 8px 14px;
   border-radius: 22px;
   cursor: pointer;
   display: flex;
@@ -217,6 +217,14 @@ body {
   color: var(--color-gold-light);
   box-shadow: var(--shadow-gold);
   outline: none;
+}
+
+.pushpa-btn {
+  color: var(--color-gold-light);
+}
+
+.flower-icon {
+  font-size: 0.95rem;
 }
 
 /* Audio Pill with Animated Equalizer */
@@ -255,16 +263,6 @@ body {
   0% { height: 3px; }
   50% { height: 14px; }
   100% { height: 5px; }
-}
-
-.youtube-player-container {
-  position: absolute;
-  top: -9999px;
-  left: -9999px;
-  width: 1px;
-  height: 1px;
-  opacity: 0;
-  pointer-events: none;
 }
 
 .hidden {
@@ -309,8 +307,8 @@ body {
   max-width: 440px;
   height: auto;
   min-height: 0;
-  max-height: 870px;
-  max-height: min(870px, 92dvh);
+  max-height: 880px;
+  max-height: min(880px, 94dvh);
   aspect-ratio: 9 / 16;
   border-radius: 28px;
   overflow: hidden;
@@ -507,31 +505,31 @@ body {
   align-items: center;
   justify-content: center;
   gap: 12px;
-  width: 90px;
-  height: 90px;
+  width: 92px;
+  height: 92px;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(74, 14, 28, 0.9) 0%, rgba(38, 5, 13, 0.95) 100%);
   border: 1.5px solid var(--color-gold);
-  box-shadow: 0 0 30px rgba(212, 175, 55, 0.4), inset 0 0 15px rgba(212, 175, 55, 0.25);
+  box-shadow: 0 0 32px rgba(212, 175, 55, 0.4), inset 0 0 15px rgba(212, 175, 55, 0.25);
   margin-bottom: 14px;
 }
 
 .crest-letter {
   font-family: var(--font-heading);
-  font-size: 1.8rem;
+  font-size: 1.85rem;
   font-weight: 700;
   color: var(--color-gold-bright);
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
 }
 
 .crest-flourish {
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   color: var(--color-gold);
 }
 
 .monogram-title {
   font-family: var(--font-heading);
-  font-size: 1.6rem;
+  font-size: 1.65rem;
   letter-spacing: 2px;
   color: var(--color-text-bright);
   text-shadow: 0 3px 15px rgba(0, 0, 0, 0.9);
@@ -540,7 +538,7 @@ body {
 
 .monogram-subtitle {
   font-family: var(--font-body);
-  font-size: 1.05rem;
+  font-size: 1.08rem;
   font-style: italic;
   color: var(--color-gold-light);
   letter-spacing: 1px;
@@ -627,8 +625,8 @@ body {
   z-index: 20;
   background: var(--color-parchment);
   background-image: 
-    radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.08) 0%, transparent 60%),
-    radial-gradient(circle at 50% 100%, rgba(74, 14, 28, 0.06) 0%, transparent 60%),
+    radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.09) 0%, transparent 60%),
+    radial-gradient(circle at 50% 100%, rgba(74, 14, 28, 0.07) 0%, transparent 60%),
     linear-gradient(180deg, #FDFBF7 0%, #F9F3E8 50%, #F5EBDA 100%);
   opacity: 0;
   pointer-events: none;
@@ -709,8 +707,8 @@ body {
   scrollbar-width: thin;
   scrollbar-color: var(--color-gold-deep) var(--color-cream);
   -webkit-overflow-scrolling: touch;
-  padding: 40px 24px 44px;
-  padding-bottom: max(44px, env(safe-area-inset-bottom));
+  padding: 40px 22px 50px;
+  padding-bottom: max(50px, env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -743,7 +741,7 @@ body {
   transform: translateY(0);
 }
 
-/* 1. Auspicious Invocation Header */
+/* 1. Auspicious Invocation & Ganesh Shloka */
 .auspicious-symbol {
   margin-bottom: 6px;
 }
@@ -754,13 +752,39 @@ body {
 
 .header-calligraphy {
   font-family: var(--font-serif);
-  font-size: 1.05rem;
+  font-size: 1.08rem;
   letter-spacing: 2px;
   font-weight: 700;
   background: var(--color-gold-foil);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   text-shadow: 0 1px 2px rgba(153, 101, 21, 0.2);
+}
+
+.shloka-box {
+  margin: 10px 0 6px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px dashed rgba(212, 175, 55, 0.55);
+  border-radius: 12px;
+  max-width: 330px;
+}
+
+.sanskrit-text {
+  font-family: var(--font-serif);
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--color-maroon);
+}
+
+.shloka-meaning {
+  font-family: var(--font-body);
+  font-size: 0.86rem;
+  font-style: italic;
+  color: var(--color-text-muted-ivory);
+  margin-top: 4px;
+  line-height: 1.35;
 }
 
 .header-divider {
@@ -791,18 +815,18 @@ body {
 /* 2. Blessing Text */
 .blessing-text {
   font-family: var(--font-body);
-  font-size: 1.12rem;
+  font-size: 1.15rem;
   font-style: italic;
   font-weight: 500;
   color: var(--color-text-muted-ivory);
   max-width: 320px;
-  line-height: 1.5;
-  margin-bottom: 18px;
+  line-height: 1.45;
+  margin-bottom: 16px;
 }
 
 /* 3. Ceremony Headline */
 .ceremony-block {
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 
 .ceremony-eyebrow-box {
@@ -833,7 +857,7 @@ body {
 
 .ceremony-title {
   font-family: var(--font-heading);
-  font-size: 2.35rem;
+  font-size: 2.4rem;
   font-weight: 800;
   letter-spacing: 10px;
   background: linear-gradient(135deg, #4A0E1C 0%, #7A182A 50%, #4A0E1C 100%);
@@ -847,20 +871,20 @@ body {
 .couple-names-block {
   width: 100%;
   max-width: 360px;
-  margin: 8px 0 16px;
+  margin: 6px 0 14px;
 }
 
 .couple-card {
   padding: 12px 14px;
-  background: rgba(255, 255, 255, 0.6);
-  border: 1px solid rgba(212, 175, 55, 0.35);
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(212, 175, 55, 0.38);
   border-radius: 14px;
   box-shadow: 0 4px 16px rgba(74, 14, 28, 0.05);
 }
 
 .bride-name, .groom-name {
   font-family: var(--font-serif);
-  font-size: 1.95rem;
+  font-size: 2rem;
   font-weight: 700;
   letter-spacing: 1px;
   color: var(--color-maroon);
@@ -869,7 +893,7 @@ body {
 
 .parentage {
   font-family: var(--font-body);
-  font-size: 0.98rem;
+  font-size: 1rem;
   font-style: italic;
   line-height: 1.4;
   color: var(--color-text-muted-ivory);
@@ -904,7 +928,7 @@ body {
   justify-content: center;
   gap: 14px;
   width: 240px;
-  margin: 4px 0 22px;
+  margin: 4px 0 20px;
   color: var(--color-gold-deep);
 }
 
@@ -993,7 +1017,7 @@ body {
 
 .date-num {
   font-family: var(--font-heading);
-  font-size: 2.65rem;
+  font-size: 2.7rem;
   color: var(--color-gold-light);
   font-weight: 800;
   line-height: 1;
@@ -1014,7 +1038,7 @@ body {
 
 .date-time {
   font-family: var(--font-sans);
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   letter-spacing: 2px;
   font-weight: 600;
   color: var(--color-peach-tint);
@@ -1087,11 +1111,11 @@ body {
   align-items: center;
   width: 100%;
   max-width: 360px;
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.72);
   border: 1px solid rgba(212, 175, 55, 0.4);
   border-radius: 14px;
   padding: 12px 10px;
-  margin-bottom: 22px;
+  margin-bottom: 18px;
   box-shadow: 0 4px 16px rgba(74, 14, 28, 0.05);
 }
 
@@ -1108,7 +1132,7 @@ body {
 
 .itinerary-name {
   font-family: var(--font-serif);
-  font-size: 0.65rem;
+  font-size: 0.66rem;
   letter-spacing: 0.8px;
   font-weight: 600;
   color: var(--color-maroon);
@@ -1116,7 +1140,7 @@ body {
 
 .itinerary-time {
   font-family: var(--font-sans);
-  font-size: 0.6rem;
+  font-size: 0.62rem;
   font-weight: 500;
   color: var(--color-text-muted-ivory);
 }
@@ -1127,11 +1151,85 @@ body {
   opacity: 0.7;
 }
 
-/* 7. Live Royal Countdown Clock */
+/* 7. Royal Attire & Theme Guide */
+.attire-theme-card {
+  width: 100%;
+  max-width: 350px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 16px rgba(74, 14, 28, 0.05);
+}
+
+.attire-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+
+.attire-icon {
+  font-size: 0.95rem;
+}
+
+.attire-title {
+  font-family: var(--font-serif);
+  font-size: 0.66rem;
+  letter-spacing: 2.5px;
+  font-weight: 700;
+  color: var(--color-gold-deep);
+}
+
+.attire-desc {
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  font-style: italic;
+  color: var(--color-text-muted-ivory);
+  margin-bottom: 8px;
+}
+
+.palette-swatches {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+}
+
+.swatch-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.swatch-circle {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid rgba(212, 175, 55, 0.6);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.swatch-maroon { background: #5C1A2B; }
+.swatch-gold { background: #D4AF37; }
+.swatch-emerald { background: #1B4D3E; }
+.swatch-ivory { background: #F8F1E5; }
+
+.swatch-name {
+  font-family: var(--font-sans);
+  font-size: 0.55rem;
+  font-weight: 600;
+  color: var(--color-maroon);
+}
+
+/* 8. Live Royal Countdown Clock */
 .countdown-section {
   width: 100%;
   max-width: 350px;
-  margin-bottom: 24px;
+  margin-bottom: 22px;
 }
 
 .countdown-heading {
@@ -1178,7 +1276,7 @@ body {
   margin-top: 4px;
 }
 
-/* 8. Palatial Venue Card */
+/* 9. Palatial Venue Card */
 .venue-block {
   width: 100%;
   max-width: 350px;
@@ -1186,7 +1284,7 @@ body {
   border: 1.5px solid rgba(212, 175, 55, 0.45);
   border-radius: 16px;
   padding: 16px 14px;
-  margin-bottom: 24px;
+  margin-bottom: 22px;
   box-shadow: 0 6px 20px rgba(74, 14, 28, 0.06);
 }
 
@@ -1222,6 +1320,12 @@ body {
   margin-bottom: 12px;
 }
 
+.venue-action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
 .venue-map-link-btn {
   display: inline-flex;
   align-items: center;
@@ -1230,12 +1334,12 @@ body {
   color: var(--color-gold-light);
   border: 1px solid var(--color-gold);
   border-radius: 20px;
-  padding: 6px 16px;
+  padding: 8px 18px;
   font-family: var(--font-sans);
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   font-weight: 600;
-  letter-spacing: 1px;
-  cursor: pointer;
+  letter-spacing: 0.8px;
+  text-decoration: none;
   transition: all 0.25s ease;
   box-shadow: 0 4px 12px rgba(74, 14, 28, 0.25);
 }
@@ -1246,11 +1350,11 @@ body {
   box-shadow: 0 6px 16px rgba(74, 14, 28, 0.35);
 }
 
-/* 9. Photo Gallery (7 Curated Slots) */
+/* 10. Photo Gallery (7 Curated Slots) */
 .gallery-section {
   width: 100%;
   max-width: 360px;
-  margin-bottom: 24px;
+  margin-bottom: 22px;
 }
 
 .section-heading {
@@ -1346,13 +1450,6 @@ body {
   pointer-events: none;
 }
 
-.gallery-item.is-empty {
-  border-style: dashed;
-  background: var(--color-parchment-warm);
-}
-
-.gallery-item.is-empty .gallery-img { display: none; }
-
 .view-gallery-btn {
   margin-top: 12px;
   background: rgba(74, 14, 28, 0.06);
@@ -1379,7 +1476,89 @@ body {
   box-shadow: 0 4px 14px rgba(74, 14, 28, 0.2);
 }
 
-/* 10. Closing Honors Block */
+/* 11. Quick Blessings & Wishes Box */
+.wishes-box-card {
+  width: 100%;
+  max-width: 350px;
+  background: rgba(255, 255, 255, 0.75);
+  border: 1.5px solid rgba(212, 175, 55, 0.45);
+  border-radius: 16px;
+  padding: 14px;
+  margin-bottom: 22px;
+  box-shadow: 0 6px 20px rgba(74, 14, 28, 0.06);
+}
+
+.wishes-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: var(--font-serif);
+  font-size: 0.72rem;
+  letter-spacing: 1.5px;
+  font-weight: 700;
+  color: var(--color-maroon);
+  margin-bottom: 10px;
+}
+
+.blessing-chips-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.blessing-chip {
+  background: rgba(74, 14, 28, 0.04);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: 12px;
+  padding: 8px 12px;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-style: italic;
+  color: var(--color-maroon);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.blessing-chip:hover, .blessing-chip.active {
+  background: rgba(212, 175, 55, 0.18);
+  border-color: var(--color-gold);
+  color: var(--color-maroon-deep);
+  font-weight: 600;
+  transform: translateX(3px);
+}
+
+.whatsapp-rsvp-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+  color: #FFFFFF;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 12px 20px;
+  border-radius: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.35);
+  transition: all 0.25s var(--ease-elegant);
+  text-decoration: none;
+}
+
+.whatsapp-rsvp-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(37, 211, 102, 0.5);
+  filter: brightness(1.06);
+}
+
+/* 12. Closing Honors Block */
 .closing-block {
   margin-bottom: 22px;
 }
@@ -1401,7 +1580,7 @@ body {
 
 .closing-families {
   font-family: var(--font-body);
-  font-size: 1.4rem;
+  font-size: 1.45rem;
   font-weight: 700;
   font-style: italic;
   color: var(--color-maroon);
@@ -1409,13 +1588,13 @@ body {
 
 .closing-subtext {
   font-family: var(--font-body);
-  font-size: 0.95rem;
+  font-size: 0.98rem;
   font-style: italic;
   color: var(--color-text-muted-ivory);
   margin-top: 4px;
 }
 
-/* 11. Guest Action Buttons */
+/* 13. Guest Action Buttons */
 .action-buttons-grid {
   display: flex;
   flex-direction: column;
@@ -1452,33 +1631,6 @@ body {
   filter: brightness(1.05);
 }
 
-.whatsapp-rsvp-btn {
-  background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
-  color: #FFFFFF;
-  font-family: var(--font-sans);
-  font-size: 0.76rem;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  padding: 12px 20px;
-  border-radius: 30px;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.35);
-  transition: all 0.25s var(--ease-elegant);
-  text-decoration: none;
-}
-
-.whatsapp-rsvp-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(37, 211, 102, 0.5);
-  filter: brightness(1.06);
-}
-
 .secondary-glass-btn {
   background: rgba(74, 14, 28, 0.08);
   border: 1.5px solid var(--color-gold-deep);
@@ -1502,7 +1654,7 @@ body {
   transform: translateY(-2px);
 }
 
-/* 12. Replay Experience Footer */
+/* 14. Replay Experience Footer */
 .invitation-footer {
   margin-top: 6px;
 }
@@ -1512,7 +1664,7 @@ body {
   border: none;
   color: var(--color-gold-deep);
   font-family: var(--font-sans);
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 1px;
   cursor: pointer;
@@ -1529,7 +1681,7 @@ body {
   background: rgba(212, 175, 55, 0.15);
 }
 
-/* Celebration Confetti Overlay Canvas */
+/* Pushpa Vrishti Canvas */
 .confetti-canvas {
   position: absolute;
   inset: 0;
@@ -1540,7 +1692,7 @@ body {
 }
 
 /* ==========================================================================
-   MODALS (DOORS, CUSTOMIZE, PHOTO MANAGER, MAP, LIGHTBOX)
+   VENUE MAP MODAL & LIGHTBOX
    ========================================================================== */
 .modal-backdrop {
   position: fixed;
@@ -1596,225 +1748,6 @@ body {
   line-height: 1;
 }
 
-/* Door Selector */
-.door-options-grid {
-  padding: 20px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.door-option-card {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(212, 175, 55, 0.25);
-  border-radius: 14px;
-  padding: 10px 14px;
-  cursor: pointer;
-  transition: all 0.25s ease;
-}
-
-.door-option-card:hover, .door-option-card.active {
-  background: rgba(212, 175, 55, 0.15);
-  border-color: var(--color-gold);
-  transform: translateX(4px);
-}
-
-.door-thumb {
-  width: 52px;
-  height: 52px;
-  border-radius: 10px;
-  overflow: hidden;
-  border: 1px solid var(--color-gold);
-  flex-shrink: 0;
-}
-
-.door-thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.door-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.door-title {
-  font-family: var(--font-serif);
-  font-size: 0.9rem;
-  color: var(--color-gold-light);
-  font-weight: 600;
-}
-
-.door-desc {
-  font-family: var(--font-sans);
-  font-size: 0.65rem;
-  color: var(--color-text-muted);
-}
-
-/* Editor Modal Form */
-.editor-form {
-  padding: 20px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.form-group label {
-  font-family: var(--font-sans);
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.8px;
-  color: var(--color-gold-light);
-}
-
-.form-group input {
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(212, 175, 55, 0.35);
-  border-radius: 10px;
-  padding: 10px 12px;
-  color: #FFFFFF;
-  font-family: var(--font-sans);
-  font-size: 0.82rem;
-  outline: none;
-  transition: border-color 0.2s ease;
-}
-
-.form-group input:focus {
-  border-color: var(--color-gold);
-}
-
-.form-row.dual {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.form-row.tri {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 8px;
-}
-
-.form-actions {
-  margin-top: 10px;
-}
-
-/* Photo Manager Modal */
-.photo-manager-card {
-  padding-bottom: 20px;
-}
-
-.photo-manager-hint {
-  padding: 12px 20px 0;
-  font-family: var(--font-sans);
-  font-size: 0.7rem;
-  color: var(--color-text-muted);
-  line-height: 1.4;
-}
-
-.photo-slots-grid {
-  padding: 16px 20px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  max-height: 60vh;
-}
-
-.photo-slot-card {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(212, 175, 55, 0.25);
-  border-radius: 14px;
-  padding: 10px;
-}
-
-.photo-slot-preview {
-  width: 58px;
-  height: 58px;
-  border-radius: 8px;
-  overflow: hidden;
-  border: 1px solid var(--color-gold);
-  flex-shrink: 0;
-  position: relative;
-  background: rgba(0, 0, 0, 0.4);
-}
-
-.photo-slot-preview img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.photo-slot-empty {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: var(--color-gold-light);
-  font-size: 0.6rem;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-.photo-slot-meta {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.photo-slot-title {
-  font-family: var(--font-serif);
-  font-size: 0.82rem;
-  color: var(--color-gold-light);
-}
-
-.photo-slot-actions {
-  display: flex;
-  gap: 8px;
-}
-
-.photo-upload-btn, .photo-remove-btn {
-  padding: 5px 10px;
-  border-radius: 12px;
-  font-family: var(--font-sans);
-  font-size: 0.65rem;
-  cursor: pointer;
-  border: 1px solid var(--color-gold);
-}
-
-.photo-upload-btn {
-  background: var(--color-gold);
-  color: var(--color-maroon-deep);
-  font-weight: 600;
-}
-
-.photo-remove-btn {
-  background: rgba(255, 0, 0, 0.15);
-  border-color: rgba(255, 100, 100, 0.4);
-  color: #FFAAAA;
-}
-
-/* Venue Map Modal */
 .map-body {
   padding: 20px;
   display: flex;
@@ -1987,11 +1920,11 @@ body {
   }
 
   .brand-tag .brand-text {
-    display: none;
+    font-size: 0.72rem;
   }
 
   .brand-tag {
-    padding: 8px 10px;
+    padding: 7px 12px;
   }
 
   .pill-label {
@@ -1999,7 +1932,7 @@ body {
   }
 
   .glass-pill-btn {
-    padding: 8px 10px;
+    padding: 7px 11px;
   }
 
   .invitation-wrapper {
@@ -2017,19 +1950,23 @@ body {
   }
 
   .content-scrollable {
-    padding: 50px 18px 40px;
+    padding: 50px 16px 44px;
   }
 
   .ceremony-title {
-    font-size: 2rem;
+    font-size: 2.1rem;
     letter-spacing: 8px;
   }
 
   .bride-name, .groom-name {
-    font-size: 1.7rem;
+    font-size: 1.75rem;
   }
 
   .date-num {
-    font-size: 2.2rem;
+    font-size: 2.3rem;
+  }
+
+  .palette-swatches {
+    gap: 10px;
   }
 }
