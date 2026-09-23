@@ -1,10 +1,9 @@
 /* ==========================================================================
-   PREMIUM INDIAN ENGAGEMENT (TILAK) INVITATION — LOGIC & ANIMATION ENGINE
+   ROYAL INDIAN WEDDING (TILAK) INVITATION — LOGIC & AUDIO ENGINE
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Element References
-  const posterImg = document.getElementById('doorPoster');
+  // Media & Canvas Elements
   const video = document.getElementById('doorVideo');
   const videoSource = document.getElementById('videoSource');
   const staticCanvas = document.getElementById('staticFrameCanvas');
@@ -12,15 +11,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const tapOverlay = document.getElementById('tapOverlay');
   const invitationOverlay = document.getElementById('invitationOverlay');
+  const lanternsContainer = document.getElementById('lanternsContainer');
+  const contentScrollable = document.getElementById('contentScrollable');
 
-  // Controls & Modals
+  // Controls & Buttons
   const doorSelectBtn = document.getElementById('doorSelectBtn');
   const editDetailsBtn = document.getElementById('editDetailsBtn');
   const photoManagerBtn = document.getElementById('photoManagerBtn');
   const audioToggleBtn = document.getElementById('audioToggleBtn');
-  const audioIconOn = document.getElementById('audioIconOn');
-  const audioIconOff = document.getElementById('audioIconOff');
+  const equalizerBars = document.getElementById('equalizerBars');
+  const audioStatusText = document.getElementById('audioStatusText');
   const replayBtn = document.getElementById('replayBtn');
+  const whatsappRsvpBtn = document.getElementById('whatsappRsvpBtn');
+  const addToCalendarBtn = document.getElementById('addToCalendarBtn');
+  const venueInlineMapBtn = document.getElementById('venueInlineMapBtn');
+  const openMapBtn = document.getElementById('openMapBtn');
 
   // Modals
   const doorModal = document.getElementById('doorModal');
@@ -28,24 +33,23 @@ document.addEventListener('DOMContentLoaded', () => {
   const editorModal = document.getElementById('editorModal');
   const closeEditorModal = document.getElementById('closeEditorModal');
   const mapModal = document.getElementById('mapModal');
-  const openMapBtn = document.getElementById('openMapBtn');
   const closeMapModal = document.getElementById('closeMapModal');
-  const addToCalendarBtn = document.getElementById('addToCalendarBtn');
   const photoManagerModal = document.getElementById('photoManagerModal');
   const closePhotoManager = document.getElementById('closePhotoManager');
-
-  // Forms & Inputs
   const editorForm = document.getElementById('editorForm');
 
-  // Application State
-  let currentDoorId = '1';
+  // Audio Elements & State
+  const weddingAudio = document.getElementById('weddingAudio');
+  let audioCtx = null;
+  let synthGainNode = null;
+  let synthOscillators = [];
   let isAudioMuted = false;
   let isPlaying = false;
   let hasOpened = false;
-  let audioCtx = null;
+  let currentDoorId = '1';
 
   // ==========================================================================
-  // EVENT CONSTANTS (DO NOT CHANGE NAMES / DATES / VENUE)
+  // EVENT CONSTANTS
   // ==========================================================================
   const EVENT = {
     countdownTarget: new Date('2026-10-18T15:00:00').getTime(),
@@ -54,10 +58,145 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // ==========================================================================
-  // TEXT PERSISTENCE (localStorage)
+  // AUDIO ENGINE (HTML5 AUDIO + WEB AUDIO RAAG SYNTHESIZER + YOUTUBE)
   // ==========================================================================
-  const TEXT_STORE_KEY = 'tilakInviteTextV1';
+  function initAudioEngine() {
+    if (!audioCtx) {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (AudioContext) {
+        audioCtx = new AudioContext();
+      }
+    }
+    if (audioCtx && audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+  }
 
+  // Web Audio Synth Fallback (Classical Indian Tanpura & Shehnai Harmony)
+  function startIndianSynthRaga() {
+    if (!audioCtx || isAudioMuted || synthGainNode) return;
+
+    try {
+      synthGainNode = audioCtx.createGain();
+      synthGainNode.gain.setValueAtTime(0.01, audioCtx.currentTime);
+      synthGainNode.gain.exponentialRampToValueAtTime(0.18, audioCtx.currentTime + 3);
+      synthGainNode.connect(audioCtx.destination);
+
+      const droneNotes = [130.81, 196.0, 261.63, 329.63]; // C3, G3, C4, E4
+      droneNotes.forEach((freq, idx) => {
+        const osc = audioCtx.createOscillator();
+        const oscGain = audioCtx.createGain();
+        osc.type = idx % 2 === 0 ? 'sine' : 'triangle';
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+        // LFO for subtle Tanpura shimmer
+        const lfo = audioCtx.createOscillator();
+        const lfoGain = audioCtx.createGain();
+        lfo.frequency.value = 0.2 + idx * 0.05;
+        lfoGain.gain.value = 1.2;
+        lfo.connect(osc.frequency);
+        lfo.start();
+
+        oscGain.gain.value = 0.25 / droneNotes.length;
+        osc.connect(oscGain);
+        oscGain.connect(synthGainNode);
+        osc.start();
+
+        synthOscillators.push(osc, lfo);
+      });
+    } catch (e) {
+      console.warn('Web Audio synth notice:', e);
+    }
+  }
+
+  function stopIndianSynthRaga() {
+    if (synthGainNode && audioCtx) {
+      try {
+        synthGainNode.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.8);
+        setTimeout(() => {
+          synthOscillators.forEach((o) => {
+            try { o.stop(); } catch (e) {}
+          });
+          synthOscillators = [];
+          synthGainNode = null;
+        }, 850);
+      } catch (e) {
+        synthGainNode = null;
+      }
+    }
+  }
+
+  function playWeddingMusic() {
+    initAudioEngine();
+    if (isAudioMuted) return;
+
+    const ytInput = document.getElementById('inputYoutubeUrl');
+    if (ytInput && ytInput.value.trim()) {
+      playYouTubeBackgroundMusic(ytInput.value.trim(), true);
+      updateEqualizerUI(true);
+      return;
+    }
+
+    if (weddingAudio) {
+      weddingAudio.volume = 0;
+      const playPromise = weddingAudio.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          // Fade in audio gently
+          let vol = 0;
+          const fadeInterval = setInterval(() => {
+            vol += 0.05;
+            if (vol >= 0.75) {
+              weddingAudio.volume = 0.75;
+              clearInterval(fadeInterval);
+            } else {
+              weddingAudio.volume = vol;
+            }
+          }, 80);
+          updateEqualizerUI(true);
+        }).catch((err) => {
+          console.log('HTML5 audio play blocked, falling back to Web Audio synth:', err);
+          startIndianSynthRaga();
+          updateEqualizerUI(true);
+        });
+      }
+    }
+  }
+
+  function pauseWeddingMusic() {
+    if (weddingAudio) {
+      weddingAudio.pause();
+    }
+    stopIndianSynthRaga();
+    toggleYouTubeAudioMute(true);
+    updateEqualizerUI(false);
+  }
+
+  function updateEqualizerUI(isPlayingAudio) {
+    if (isPlayingAudio && !isAudioMuted) {
+      equalizerBars.classList.add('playing');
+      equalizerBars.classList.remove('muted');
+      audioStatusText.textContent = 'Music';
+    } else {
+      equalizerBars.classList.remove('playing');
+      equalizerBars.classList.add('muted');
+      audioStatusText.textContent = 'Muted';
+    }
+  }
+
+  audioToggleBtn.addEventListener('click', () => {
+    isAudioMuted = !isAudioMuted;
+    if (isAudioMuted) {
+      pauseWeddingMusic();
+    } else {
+      playWeddingMusic();
+    }
+  });
+
+  // ==========================================================================
+  // TEXT & DETAILS PERSISTENCE
+  // ==========================================================================
+  const TEXT_STORE_KEY = 'royalTilakInviteV2';
   const TEXT_FIELDS = [
     { input: 'inputBride', display: 'displayBride' },
     { input: 'inputGroom', display: 'displayGroom' },
@@ -94,9 +233,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const yt = document.getElementById('inputYoutubeUrl');
         if (yt) yt.value = saved.inputYoutubeUrl;
       }
+      if (typeof saved.inputWhatsappNumber === 'string') {
+        const wa = document.getElementById('inputWhatsappNumber');
+        if (wa) wa.value = saved.inputWhatsappNumber;
+      }
       syncAuxiliaryText();
     } catch (e) {
-      console.warn('Saved text could not be restored:', e);
+      console.warn('Saved text restore notice:', e);
     }
   }
 
@@ -109,6 +252,8 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       const yt = document.getElementById('inputYoutubeUrl');
       if (yt) payload.inputYoutubeUrl = yt.value;
+      const wa = document.getElementById('inputWhatsappNumber');
+      if (wa) payload.inputWhatsappNumber = wa.value;
       localStorage.setItem(TEXT_STORE_KEY, JSON.stringify(payload));
     } catch (e) {
       console.warn('Could not persist invitation text:', e);
@@ -135,26 +280,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   loadSavedText();
 
-  // --- Audio Context Helper ---
-  function initAudioContext() {
-    if (!audioCtx) {
-      const AudioContext = window.AudioContext || window.webkitAudioContext;
-      if (AudioContext) {
-        audioCtx = new AudioContext();
-      }
-    }
-    if (audioCtx && audioCtx.state === 'suspended') {
-      audioCtx.resume();
-    }
-  }
-
-  // --- 3D Depth Floating Lanterns Engine ---
+  // ==========================================================================
+  // 3D FLOATING LANTERNS ENGINE
+  // ==========================================================================
   function initFloatingLanterns() {
-    const container = document.getElementById('lanternsContainer');
-    if (!container) return;
-
-    container.innerHTML = '';
-    const lanternCount = 18;
+    if (!lanternsContainer) return;
+    lanternsContainer.innerHTML = '';
+    const lanternCount = 20;
     const depthTiers = ['depth-far', 'depth-far', 'depth-mid', 'depth-mid', 'depth-near'];
 
     for (let i = 0; i < lanternCount; i++) {
@@ -164,7 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const leftPos = (Math.random() * 92 + 4).toFixed(1);
       const duration = (Math.random() * 14 + 14).toFixed(1);
-      const delay = (Math.random() * 20).toFixed(1);
+      const delay = (Math.random() * 18).toFixed(1);
       const swayX = (Math.random() * 24 + 10).toFixed(0);
       const rotDeg = (Math.random() * 6 - 3).toFixed(1);
 
@@ -181,30 +313,31 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="lantern-tassel"></div>
       `;
 
-      container.appendChild(lantern);
+      lanternsContainer.appendChild(lantern);
     }
   }
 
   initFloatingLanterns();
 
-  // --- Capture Final Video Frame onto Canvas for Static Hold ---
+  // ==========================================================================
+  // FREEZE FINAL FRAME & REVEAL INVITATION
+  // ==========================================================================
   function freezeFinalFrame() {
     if (video.videoWidth && video.videoHeight) {
       staticCanvas.width = video.videoWidth;
       staticCanvas.height = video.videoHeight;
       canvasCtx.drawImage(video, 0, 0, staticCanvas.width, staticCanvas.height);
-
       staticCanvas.classList.add('active');
       video.pause();
     }
   }
 
-  // --- Helper: Reveal Invitation Content ---
   function revealInvitationContent() {
     freezeFinalFrame();
     hasOpened = true;
     isPlaying = false;
 
+    if (lanternsContainer) lanternsContainer.classList.add('revealed');
     invitationOverlay.classList.remove('hidden');
     void invitationOverlay.offsetWidth;
     invitationOverlay.classList.add('revealed');
@@ -214,7 +347,78 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 150);
   }
 
-  // --- HTML5 Scratch Card Engine ---
+  // ==========================================================================
+  // DOOR OPENING SEQUENCE
+  // ==========================================================================
+  function openDoorInvitation() {
+    if (isPlaying || hasOpened) return;
+
+    isPlaying = true;
+    playWeddingMusic();
+
+    tapOverlay.classList.add('fade-out');
+    staticCanvas.classList.remove('active');
+    video.currentTime = 0;
+
+    const playPromise = video.play();
+    if (playPromise !== undefined) {
+      playPromise.then(() => {
+        // Video playing smoothly to completion
+      }).catch((err) => {
+        console.warn('Video play fallback:', err);
+        revealInvitationContent();
+      });
+    }
+  }
+
+  tapOverlay.addEventListener('click', openDoorInvitation);
+  tapOverlay.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      openDoorInvitation();
+    }
+  });
+
+  video.addEventListener('timeupdate', () => {
+    if (video.currentTime >= 5.8) {
+      if (lanternsContainer) lanternsContainer.classList.add('revealed');
+    }
+    if (!hasOpened && (video.currentTime >= 5.8 || video.ended)) {
+      revealInvitationContent();
+    }
+  });
+
+  video.addEventListener('ended', () => {
+    freezeFinalFrame();
+    if (!hasOpened) {
+      revealInvitationContent();
+    }
+  });
+
+  // Reset & Replay
+  function resetDoorState() {
+    isPlaying = false;
+    hasOpened = false;
+
+    video.pause();
+    video.currentTime = 0;
+    staticCanvas.classList.remove('active');
+    invitationOverlay.classList.remove('revealed');
+
+    if (lanternsContainer) lanternsContainer.classList.remove('revealed');
+    if (contentScrollable) contentScrollable.scrollTop = 0;
+
+    setTimeout(() => {
+      invitationOverlay.classList.add('hidden');
+      tapOverlay.classList.remove('fade-out');
+    }, 400);
+  }
+
+  replayBtn.addEventListener('click', resetDoorState);
+
+  // ==========================================================================
+  // SHIMMERING GOLD FOIL SCRATCH CARD ENGINE
+  // ==========================================================================
   const scratchCanvas = document.getElementById('scratchCanvas');
   const scratchHint = document.getElementById('scratchHint');
   const quickRevealBtn = document.getElementById('quickRevealBtn');
@@ -230,32 +434,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('scratchContainer');
     if (!container) return;
 
-    scratchCanvas.width = container.offsetWidth || 320;
-    scratchCanvas.height = container.offsetHeight || 130;
+    scratchCanvas.width = container.offsetWidth || 340;
+    scratchCanvas.height = container.offsetHeight || 140;
 
     const grad = scratchCtx.createLinearGradient(0, 0, scratchCanvas.width, scratchCanvas.height);
-    grad.addColorStop(0, '#D9B84C');
-    grad.addColorStop(0.35, '#F6E7B0');
-    grad.addColorStop(0.7, '#C9A227');
-    grad.addColorStop(1, '#8A6A1F');
+    grad.addColorStop(0, '#E8C86A');
+    grad.addColorStop(0.3, '#FFF2C6');
+    grad.addColorStop(0.6, '#D4AF37');
+    grad.addColorStop(1, '#996515');
 
     scratchCtx.fillStyle = grad;
     scratchCtx.fillRect(0, 0, scratchCanvas.width, scratchCanvas.height);
 
-    scratchCtx.fillStyle = 'rgba(255, 255, 255, 0.35)';
-    for (let i = 0; i < 150; i++) {
+    // Golden sparkles overlay
+    scratchCtx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+    for (let i = 0; i < 160; i++) {
       const x = Math.random() * scratchCanvas.width;
       const y = Math.random() * scratchCanvas.height;
-      const r = Math.random() * 2 + 0.5;
+      const r = Math.random() * 2.2 + 0.5;
       scratchCtx.beginPath();
       scratchCtx.arc(x, y, r, 0, Math.PI * 2);
       scratchCtx.fill();
     }
 
-    scratchCtx.font = '600 12px "Cormorant Garamond", serif';
-    scratchCtx.fillStyle = 'rgba(63, 15, 30, 0.82)';
+    scratchCtx.font = '700 12px "Cinzel", serif';
+    scratchCtx.fillStyle = 'rgba(74, 14, 28, 0.9)';
     scratchCtx.textAlign = 'center';
-    scratchCtx.fillText('✦ SCRATCH TO UNLOCK DATE ✦', scratchCanvas.width / 2, scratchCanvas.height / 2 + 4);
+    scratchCtx.fillText('✦ SCRATCH GOLD FOIL TO REVEAL DATE ✦', scratchCanvas.width / 2, scratchCanvas.height / 2 + 4);
   }
 
   function scratchAt(x, y) {
@@ -263,11 +468,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     scratchCtx.globalCompositeOperation = 'destination-out';
     scratchCtx.beginPath();
-    scratchCtx.arc(x, y, 22, 0, Math.PI * 2);
+    scratchCtx.arc(x, y, 24, 0, Math.PI * 2);
     scratchCtx.fill();
 
     dragCount++;
-    if (dragCount % 10 === 0) {
+    if (dragCount % 8 === 0) {
       checkScratchPercentage();
     }
   }
@@ -304,7 +509,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const totalSampled = pixels.length / 16;
     const ratio = transparentCount / totalSampled;
 
-    if (ratio > 0.35) {
+    if (ratio > 0.32) {
       revealDateFully();
     }
   }
@@ -348,7 +553,9 @@ document.addEventListener('DOMContentLoaded', () => {
     quickRevealBtn.addEventListener('click', revealDateFully);
   }
 
-  // --- Gold Confetti Particle Celebration Engine ---
+  // ==========================================================================
+  // GOLD & ROSE CONFETTI CELEBRATION ENGINE
+  // ==========================================================================
   const confettiCanvas = document.getElementById('confettiCanvas');
   let confettiCtx = null;
   let confettiParticles = [];
@@ -362,19 +569,19 @@ document.addEventListener('DOMContentLoaded', () => {
     confettiCanvas.width = container ? container.offsetWidth : window.innerWidth;
     confettiCanvas.height = container ? container.offsetHeight : window.innerHeight;
 
-    const colors = ['#E8CE7A', '#C9A227', '#F3D9C8', '#FFFFFF', '#A8842C', '#7A2233'];
+    const colors = ['#FBF2C0', '#D4AF37', '#ECC868', '#FFFFFF', '#80182E', '#996515'];
     confettiParticles = [];
 
-    for (let i = 0; i < 70; i++) {
+    for (let i = 0; i < 85; i++) {
       confettiParticles.push({
-        x: confettiCanvas.width / 2 + (Math.random() * 60 - 30),
-        y: confettiCanvas.height * 0.35,
-        vx: (Math.random() - 0.5) * 12,
-        vy: (Math.random() * -10) - 4,
-        size: Math.random() * 6 + 3,
+        x: confettiCanvas.width / 2 + (Math.random() * 80 - 40),
+        y: confettiCanvas.height * 0.3,
+        vx: (Math.random() - 0.5) * 14,
+        vy: (Math.random() * -11) - 4,
+        size: Math.random() * 7 + 3,
         color: colors[Math.floor(Math.random() * colors.length)],
         rotation: Math.random() * 360,
-        rotationSpeed: (Math.random() - 0.5) * 8,
+        rotationSpeed: (Math.random() - 0.5) * 9,
         opacity: 1,
       });
     }
@@ -392,9 +599,9 @@ document.addEventListener('DOMContentLoaded', () => {
     confettiParticles.forEach((p) => {
       p.x += p.vx;
       p.y += p.vy;
-      p.vy += 0.25;
+      p.vy += 0.28;
       p.rotation += p.rotationSpeed;
-      p.opacity -= 0.008;
+      p.opacity -= 0.007;
 
       if (p.opacity > 0) {
         activeParticles++;
@@ -415,7 +622,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // --- Live Countdown Timer Engine ---
+  // ==========================================================================
+  // LIVE COUNTDOWN TIMER ENGINE
+  // ==========================================================================
   const cdDays = document.getElementById('cdDays');
   const cdHours = document.getElementById('cdHours');
   const cdMins = document.getElementById('cdMins');
@@ -450,24 +659,24 @@ document.addEventListener('DOMContentLoaded', () => {
   setInterval(updateCountdown, 1000);
 
   // ==========================================================================
-  // PHOTO GALLERY — 7 SLOTS, IndexedDB PERSISTENCE, UPLOAD MANAGER, LIGHTBOX
+  // PHOTO GALLERY (7 SLOTS, INDEXEDDB, LIGHTBOX)
   // ==========================================================================
   const GALLERY_META = [
     { slot: 1, name: '1 · Hero Couple Photo', label: 'Together', alt: 'Richa Dwivedi and Akash Shukla — main couple photo' },
     { slot: 2, name: '2 · Bride Photo', label: 'The Bride', alt: 'Richa Dwivedi — bride photo' },
     { slot: 3, name: '3 · Groom Photo', label: 'The Groom', alt: 'Akash Shukla — groom photo' },
-    { slot: 4, name: '4 · Bride & Groom Photo', label: 'Us', alt: 'Richa Dwivedi and Akash Shukla — couple photo' },
-    { slot: 5, name: '5 · Family Photo', label: 'Family', alt: 'Family photo' },
-    { slot: 6, name: '6 · Family / Couple Photo', label: 'Together', alt: 'Family and couple photo' },
-    { slot: 7, name: '7 · Memories Photo', label: 'Memories', alt: 'Additional cherished memory photo' },
+    { slot: 4, name: '4 · Couple Portrait', label: 'Cherished', alt: 'Richa Dwivedi and Akash Shukla — couple photo' },
+    { slot: 5, name: '5 · Family Blessing', label: 'Family Blessings', alt: 'Family photo' },
+    { slot: 6, name: '6 · Celebration Moment', label: 'Celebration', alt: 'Family and couple photo' },
+    { slot: 7, name: '7 · Cherished Memories', label: 'Memories', alt: 'Additional cherished memory photo' },
   ];
 
   const DB_NAME = 'tilak-invite-gallery';
   const DB_STORE = 'photos';
-  const GALLERY_STATE_KEY = 'tilakGalleryStateV1';
+  const GALLERY_STATE_KEY = 'tilakGalleryStateV2';
 
-  const customUrls = new Array(7).fill(null); // object URLs for uploaded blobs
-  const slotState = new Array(7).fill('default'); // 'default' | 'empty'
+  const customUrls = new Array(7).fill(null);
+  const slotState = new Array(7).fill('default');
 
   function defaultSrc(i) {
     return `/assets/gallery/photo-${i + 1}.webp`;
@@ -492,7 +701,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (saved[i + 1] === 'empty' && !customUrls[i]) slotState[i] = 'empty';
       }
     } catch (e) {
-      console.warn('Gallery state restore failed:', e);
+      console.warn('Gallery state restore notice:', e);
     }
   }
 
@@ -504,7 +713,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       localStorage.setItem(GALLERY_STATE_KEY, JSON.stringify(payload));
     } catch (e) {
-      console.warn('Gallery state save failed:', e);
+      console.warn('Gallery state save notice:', e);
     }
   }
 
@@ -555,22 +764,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const src = getEffectiveSrc(i);
     const meta = GALLERY_META[i];
 
-    // Hero (slot 1)
-    if (i === 0) {
-      const hero = document.getElementById('heroPhoto');
-      const heroBtn = document.querySelector('.hero-photo-btn');
-      if (hero) {
-        if (src) {
-          if (hero.getAttribute('src') !== src) hero.src = src;
-          hero.style.display = '';
-        } else {
-          hero.style.display = 'none';
-        }
-      }
-      if (heroBtn) heroBtn.style.display = src ? '' : 'none';
-    }
-
-    // Gallery grid button
     const item = document.querySelector(`.gallery-item[data-gallery-index="${i}"]`);
     if (item) {
       const img = item.querySelector('.gallery-img');
@@ -587,111 +780,51 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Photo manager preview
     updatePhotoSlotPreview(i);
+  }
 
-    // Lightbox refresh if this slot is currently shown
-    if (lightboxOpen && lightboxSlot === i && src) {
-      lightboxImg.src = src;
-      lightboxImg.alt = meta.alt;
+  function updatePhotoSlotPreview(i) {
+    const photoSlotsGrid = document.getElementById('photoSlotsGrid');
+    if (!photoSlotsGrid) return;
+    const preview = photoSlotsGrid.querySelector(`[data-preview="${i}"]`);
+    if (!preview) return;
+
+    const src = getEffectiveSrc(i);
+    let img = preview.querySelector('img');
+    if (src) {
+      if (!img) {
+        img = document.createElement('img');
+        img.alt = GALLERY_META[i].alt;
+        preview.appendChild(img);
+      }
+      img.src = src;
+    } else if (img) {
+      img.remove();
     }
   }
-
-  // --- Image Upload Compression ---
-  function loadImageFromFile(file) {
-    return new Promise((resolve, reject) => {
-      const url = URL.createObjectURL(file);
-      const img = new Image();
-      img.onload = () => {
-        URL.revokeObjectURL(url);
-        resolve(img);
-      };
-      img.onerror = () => {
-        URL.revokeObjectURL(url);
-        reject(new Error('Could not read image file.'));
-      };
-      img.src = url;
-    });
-  }
-
-  async function compressImage(file) {
-    if (!file.type.startsWith('image/')) {
-      throw new Error('Please choose an image file.');
-    }
-    const img = await loadImageFromFile(file);
-    const maxDim = 1600;
-    let { width, height } = img;
-    if (width > maxDim || height > maxDim) {
-      const scale = Math.min(maxDim / width, maxDim / height);
-      width = Math.round(width * scale);
-      height = Math.round(height * scale);
-    }
-
-    const canvas = document.createElement('canvas');
-    canvas.width = width;
-    canvas.height = height;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(img, 0, 0, width, height);
-
-    const blob = await new Promise((resolve) => {
-      canvas.toBlob((b) => resolve(b), 'image/webp', 0.8);
-    });
-    if (blob) return blob;
-
-    // Fallback for browsers without WebP encoding
-    const jpegBlob = await new Promise((resolve) => {
-      canvas.toBlob((b) => resolve(b), 'image/jpeg', 0.82);
-    });
-    if (!jpegBlob) throw new Error('Image optimization failed.');
-    return jpegBlob;
-  }
-
-  async function setSlotImage(i, file) {
-    const blob = await compressImage(file);
-    await idbPut(i + 1, blob);
-
-    if (customUrls[i]) URL.revokeObjectURL(customUrls[i]);
-    customUrls[i] = URL.createObjectURL(blob);
-    slotState[i] = 'default'; // has custom content
-    saveGalleryState();
-    applySlotToDom(i);
-  }
-
-  async function removeSlotImage(i) {
-    await idbDel(i + 1);
-    if (customUrls[i]) {
-      URL.revokeObjectURL(customUrls[i]);
-      customUrls[i] = null;
-      slotState[i] = 'default'; // revert to bundled default photo
-    } else {
-      slotState[i] = 'empty'; // no custom → hide slot
-    }
-    saveGalleryState();
-    applySlotToDom(i);
-  }
-
-  // --- Photo Manager UI ---
-  const photoSlotsGrid = document.getElementById('photoSlotsGrid');
 
   function buildPhotoSlots() {
+    const photoSlotsGrid = document.getElementById('photoSlotsGrid');
     if (!photoSlotsGrid) return;
     photoSlotsGrid.innerHTML = '';
 
-    GALLERY_META.forEach((meta, i) => {
+    GALLERY_META.forEach((meta, idx) => {
       const card = document.createElement('div');
-      card.className = 'photo-slot';
-      card.dataset.slotIndex = String(i);
+      card.className = 'photo-slot-card';
 
+      const src = getEffectiveSrc(idx);
       card.innerHTML = `
-        <div class="photo-slot-preview" data-preview="${i}">
-          <span class="photo-slot-badge">Image ${i + 1}</span>
-          <img alt="" hidden>
+        <div class="photo-slot-preview" data-preview="${idx}">
+          ${src ? `<img src="${src}" alt="${meta.alt}">` : `<button type="button" class="photo-slot-empty" data-action="upload" data-index="${idx}">+ Photo ${idx + 1}</button>`}
         </div>
         <div class="photo-slot-meta">
-          <span class="photo-slot-name">${meta.name}</span>
+          <div class="photo-slot-title">${meta.name}</div>
           <div class="photo-slot-actions">
-            <button type="button" class="photo-upload-btn" data-action="upload" data-index="${i}">Upload / Replace</button>
-            <button type="button" class="photo-remove-btn" data-action="remove" data-index="${i}">Remove</button>
+            <label class="photo-upload-btn">
+              Upload
+              <input type="file" accept="image/*" style="display:none" data-upload-index="${idx}">
+            </label>
+            <button type="button" class="photo-remove-btn" data-remove-index="${idx}">Reset</button>
           </div>
         </div>
       `;
@@ -699,96 +832,32 @@ document.addEventListener('DOMContentLoaded', () => {
       photoSlotsGrid.appendChild(card);
     });
 
-    // Hidden file input (single, reused)
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = 'image/*';
-    fileInput.style.display = 'none';
-    fileInput.id = 'galleryFileInput';
-    photoSlotsGrid.appendChild(fileInput);
-
-    photoSlotsGrid.addEventListener('click', onPhotoSlotClick);
-    fileInput.addEventListener('change', onPhotoFileSelected);
-
-    GALLERY_META.forEach((_, i) => updatePhotoSlotPreview(i));
-  }
-
-  let activeUploadIndex = -1;
-
-  function onPhotoSlotClick(e) {
-    const btn = e.target.closest('button[data-action]');
-    if (!btn) return;
-    const index = Number(btn.dataset.index);
-    const action = btn.dataset.action;
-
-    if (action === 'upload') {
-      const fileInput = document.getElementById('galleryFileInput');
-      if (!fileInput) return;
-      activeUploadIndex = index;
-      fileInput.value = '';
-      fileInput.click();
-    } else if (action === 'remove') {
-      removeSlotImage(index).catch((err) => {
-        console.warn(err);
-        alert('Could not remove the image. Please try again.');
+    // Wire upload listeners
+    photoSlotsGrid.querySelectorAll('[data-upload-index]').forEach((input) => {
+      input.addEventListener('change', async (e) => {
+        if (e.target.files && e.target.files[0]) {
+          const index = Number(e.target.dataset.uploadIndex);
+          const file = e.target.files[0];
+          const blobUrl = URL.createObjectURL(file);
+          customUrls[index] = blobUrl;
+          slotState[index] = 'default';
+          await idbPut(index + 1, file);
+          saveGalleryState();
+          applySlotToDom(index);
+        }
       });
-    }
-  }
+    });
 
-  async function onPhotoFileSelected(e) {
-    const file = e.target.files && e.target.files[0];
-    if (!file || activeUploadIndex < 0) return;
-    const index = activeUploadIndex;
-    try {
-      await setSlotImage(index, file);
-    } catch (err) {
-      console.warn(err);
-      alert(err.message || 'Could not upload the image. Please try a different photo.');
-    }
-  }
-
-  function updatePhotoSlotPreview(i) {
-    if (!photoSlotsGrid) return;
-    const preview = photoSlotsGrid.querySelector(`[data-preview="${i}"]`);
-    if (!preview) return;
-
-    const src = getEffectiveSrc(i);
-    let img = preview.querySelector('img');
-    let emptyBtn = preview.querySelector('.photo-slot-empty');
-    const badge = preview.querySelector('.photo-slot-badge');
-
-    if (src) {
-      if (!img) {
-        img = document.createElement('img');
-        img.alt = GALLERY_META[i].alt;
-        preview.appendChild(img);
-      }
-      img.hidden = false;
-      if (img.getAttribute('src') !== src) img.src = src;
-      if (emptyBtn) emptyBtn.remove();
-      preview.appendChild(badge);
-    } else {
-      if (img) img.remove();
-      if (!emptyBtn) {
-        emptyBtn = document.createElement('button');
-        emptyBtn.type = 'button';
-        emptyBtn.className = 'photo-slot-empty';
-        emptyBtn.dataset.action = 'upload';
-        emptyBtn.dataset.index = String(i);
-        emptyBtn.innerHTML = `
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-          <span>Upload Photo ${i + 1}</span>
-        `;
-        preview.appendChild(emptyBtn);
-      }
-      preview.appendChild(badge);
-    }
-
-    // Remove button disabled when nothing to remove beyond default-empty
-    const removeBtn = photoSlotsGrid.querySelector(`.photo-remove-btn[data-index="${i}"]`);
-    if (removeBtn) {
-      removeBtn.disabled = !customUrls[i] && slotState[i] !== 'default';
-    }
+    photoSlotsGrid.querySelectorAll('[data-remove-index]').forEach((btn) => {
+      btn.addEventListener('click', async (e) => {
+        const index = Number(e.target.dataset.removeIndex);
+        customUrls[index] = null;
+        slotState[index] = 'default';
+        await idbDel(index + 1);
+        saveGalleryState();
+        applySlotToDom(index);
+      });
+    });
   }
 
   async function hydrateGallery() {
@@ -802,14 +871,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     } catch (e) {
-      console.warn('IndexedDB unavailable, using default photos:', e);
+      console.warn('IndexedDB gallery notice:', e);
     }
     saveGalleryState();
     for (let i = 0; i < 7; i++) applySlotToDom(i);
     buildPhotoSlots();
   }
 
-  // --- Lightbox ---
+  // Lightbox
   const lightbox = document.getElementById('lightbox');
   const lightboxImg = document.getElementById('lightboxImg');
   const lightboxCounter = document.getElementById('lightboxCounter');
@@ -820,7 +889,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let lightboxOpen = false;
   let lightboxSlot = 0;
-  let lastFocusedElement = null;
 
   function visibleSlots() {
     const list = [];
@@ -837,15 +905,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const position = list.indexOf(lightboxSlot) + 1;
 
     if (src) {
-      lightboxImg.classList.add('is-swapping');
-      const temp = new Image();
-      temp.onload = () => {
-        lightboxImg.src = src;
-        lightboxImg.alt = meta.alt;
-        lightboxImg.classList.remove('is-swapping');
-      };
-      temp.onerror = () => lightboxImg.classList.remove('is-swapping');
-      temp.src = src;
+      lightboxImg.src = src;
+      lightboxImg.alt = meta.alt;
     }
 
     lightboxCounter.textContent = `${position} / ${list.length}`;
@@ -856,11 +917,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!isSlotVisible(slotIndex)) return;
     lightboxSlot = slotIndex;
     lightboxOpen = true;
-    lastFocusedElement = document.activeElement;
     lightbox.classList.add('is-open');
     lightbox.setAttribute('aria-hidden', 'false');
     renderLightbox();
-    lightboxClose.focus();
   }
 
   function closeLightbox() {
@@ -868,9 +927,6 @@ document.addEventListener('DOMContentLoaded', () => {
     lightbox.classList.remove('is-open');
     lightbox.setAttribute('aria-hidden', 'true');
     lightboxImg.src = '';
-    if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
-      lastFocusedElement.focus();
-    }
   }
 
   function stepLightbox(direction) {
@@ -899,24 +955,6 @@ document.addEventListener('DOMContentLoaded', () => {
     lightbox.addEventListener('click', (e) => {
       if (e.target === lightbox) closeLightbox();
     });
-
-    // Swipe gestures (mobile)
-    let touchStartX = 0;
-    let touchStartY = 0;
-    lightbox.addEventListener('touchstart', (e) => {
-      if (e.touches.length !== 1) return;
-      touchStartX = e.touches[0].clientX;
-      touchStartY = e.touches[0].clientY;
-    }, { passive: true });
-
-    lightbox.addEventListener('touchend', (e) => {
-      if (!e.changedTouches.length) return;
-      const dx = e.changedTouches[0].clientX - touchStartX;
-      const dy = e.changedTouches[0].clientY - touchStartY;
-      if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy)) {
-        stepLightbox(dx < 0 ? 1 : -1);
-      }
-    }, { passive: true });
   }
 
   document.addEventListener('keydown', (e) => {
@@ -926,109 +964,18 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'ArrowRight') stepLightbox(1);
   });
 
-  // Photo manager modal controls
-  if (photoManagerBtn) {
-    photoManagerBtn.addEventListener('click', () => photoManagerModal.classList.remove('hidden'));
-  }
-  if (closePhotoManager) {
-    closePhotoManager.addEventListener('click', () => photoManagerModal.classList.add('hidden'));
-  }
-
   hydrateGallery();
 
-  // --- Door Opening Handler ---
-  function openDoorInvitation() {
-    if (isPlaying || hasOpened) return;
-
-    isPlaying = true;
-    initAudioContext();
-
-    const ytUrlInput = document.getElementById('inputYoutubeUrl');
-    if (ytUrlInput && ytUrlInput.value) {
-      playYouTubeBackgroundMusic(ytUrlInput.value, true);
-    }
-
-    tapOverlay.classList.add('fade-out');
-    posterImg.classList.add('fade-out');
-    staticCanvas.classList.remove('active');
-    video.currentTime = 0;
-
-    const playPromise = video.play();
-    if (playPromise !== undefined) {
-      playPromise.then(() => {
-        // Video playing to completion
-      }).catch((err) => {
-        console.warn('Video auto-play error fallback:', err);
-        revealInvitationContent();
-      });
-    }
-  }
-
-  const contentScrollable = document.getElementById('contentScrollable');
-  window.addEventListener('wheel', (e) => {
-    if (hasOpened && contentScrollable) {
-      contentScrollable.scrollTop += e.deltaY;
-    }
-  }, { passive: true });
-
-  // --- Video Event Listeners ---
-  video.addEventListener('timeupdate', () => {
-    if (video.currentTime >= 6.0) {
-      const lanternsContainer = document.getElementById('lanternsContainer');
-      if (lanternsContainer) lanternsContainer.classList.add('revealed');
-    }
-
-    if (!hasOpened && (video.currentTime >= 6.0 || video.ended)) {
-      revealInvitationContent();
-    }
-  });
-
-  video.addEventListener('ended', () => {
-    freezeFinalFrame();
-    if (!hasOpened) {
-      revealInvitationContent();
-    }
-  });
-
-  // --- Reset & Replay ---
-  function resetDoorState() {
-    isPlaying = false;
-    hasOpened = false;
-
-    video.pause();
-    video.currentTime = 0;
-
-    staticCanvas.classList.remove('active');
-    invitationOverlay.classList.remove('revealed');
-
-    const lanternsContainer = document.getElementById('lanternsContainer');
-    if (lanternsContainer) lanternsContainer.classList.remove('revealed');
-
-    if (contentScrollable) contentScrollable.scrollTop = 0;
-
-    setTimeout(() => {
-      invitationOverlay.classList.add('hidden');
-      posterImg.classList.remove('fade-out');
-      tapOverlay.classList.remove('fade-out');
-    }, 400);
-  }
-
-  // --- Door Selector Logic ---
+  // ==========================================================================
+  // DOOR STYLE SWITCHER
+  // ==========================================================================
   function switchDoorStyle(doorId) {
     if (currentDoorId === doorId) return;
 
     currentDoorId = doorId;
     resetDoorState();
 
-    const posterPath = `/assets/doors/${doorId}.avif`;
     const videoPath = `/assets/doors/${doorId}.mp4`;
-
-    posterImg.onerror = () => {
-      if (!posterImg.src.endsWith('.webp')) {
-        posterImg.src = `/assets/doors/${doorId}.webp`;
-      }
-    };
-    posterImg.src = posterPath;
     videoSource.src = videoPath;
     video.load();
 
@@ -1039,16 +986,6 @@ document.addEventListener('DOMContentLoaded', () => {
     doorModal.classList.add('hidden');
   }
 
-  tapOverlay.addEventListener('click', openDoorInvitation);
-  tapOverlay.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      openDoorInvitation();
-    }
-  });
-  replayBtn.addEventListener('click', resetDoorState);
-
-  // --- Door Modal Controls ---
   doorSelectBtn.addEventListener('click', () => doorModal.classList.remove('hidden'));
   closeDoorModal.addEventListener('click', () => doorModal.classList.add('hidden'));
 
@@ -1056,17 +993,15 @@ document.addEventListener('DOMContentLoaded', () => {
     card.addEventListener('click', () => {
       switchDoorStyle(card.dataset.door);
     });
-    card.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        switchDoorStyle(card.dataset.door);
-      }
-    });
   });
 
-  // --- Details Editor Controls ---
+  // ==========================================================================
+  // DETAILS EDITOR
+  // ==========================================================================
   editDetailsBtn.addEventListener('click', () => editorModal.classList.remove('hidden'));
   closeEditorModal.addEventListener('click', () => editorModal.classList.add('hidden'));
+  photoManagerBtn.addEventListener('click', () => photoManagerModal.classList.remove('hidden'));
+  closePhotoManager.addEventListener('click', () => photoManagerModal.classList.add('hidden'));
 
   editorForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -1083,15 +1018,16 @@ document.addEventListener('DOMContentLoaded', () => {
     saveCurrentText();
 
     const ytUrlInput = document.getElementById('inputYoutubeUrl');
-    if (ytUrlInput && ytUrlInput.value) {
-      playYouTubeBackgroundMusic(ytUrlInput.value, true);
+    if (ytUrlInput && ytUrlInput.value.trim()) {
+      playWeddingMusic();
     }
 
     editorModal.classList.add('hidden');
   });
 
-  // --- YouTube Background Music Player Engine ---
-  let currentYoutubeVideoId = '';
+  // ==========================================================================
+  // YOUTUBE MUSIC ENGINE
+  // ==========================================================================
   let ytPlayerIframe = null;
 
   function extractYouTubeId(url) {
@@ -1109,7 +1045,6 @@ document.addEventListener('DOMContentLoaded', () => {
   function playYouTubeBackgroundMusic(url, autoPlay = true) {
     const videoId = extractYouTubeId(url);
     if (!videoId) return;
-    currentYoutubeVideoId = videoId;
     const container = document.getElementById('youtubePlayerContainer');
     if (!container) return;
 
@@ -1132,28 +1067,20 @@ document.addEventListener('DOMContentLoaded', () => {
         args: [],
       }), '*');
     } catch (e) {
-      console.warn('YouTube audio command postMessage exception:', e);
+      console.warn('YouTube command notice:', e);
     }
   }
 
-  // --- Audio Mute Toggle ---
-  audioToggleBtn.addEventListener('click', () => {
-    isAudioMuted = !isAudioMuted;
-    video.muted = isAudioMuted;
+  // ==========================================================================
+  // MAP MODAL & ACTIONS
+  // ==========================================================================
+  if (venueInlineMapBtn) {
+    venueInlineMapBtn.addEventListener('click', () => {
+      syncAuxiliaryText();
+      mapModal.classList.remove('hidden');
+    });
+  }
 
-    toggleYouTubeAudioMute(isAudioMuted);
-
-    if (isAudioMuted) {
-      audioIconOn.classList.add('hidden');
-      audioIconOff.classList.remove('hidden');
-    } else {
-      audioIconOn.classList.remove('hidden');
-      audioIconOff.classList.add('hidden');
-      initAudioContext();
-    }
-  });
-
-  // --- Map Modal Controls ---
   openMapBtn.addEventListener('click', () => {
     syncAuxiliaryText();
     mapModal.classList.remove('hidden');
@@ -1169,7 +1096,25 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // --- Add to Google Calendar (18 October 2026, 3:00 PM IST) ---
+  // ==========================================================================
+  // WHATSAPP RSVP & BLESSINGS
+  // ==========================================================================
+  if (whatsappRsvpBtn) {
+    whatsappRsvpBtn.addEventListener('click', () => {
+      const bride = document.getElementById('displayBride').innerText.trim();
+      const groom = document.getElementById('displayGroom').innerText.trim();
+      const waInput = document.getElementById('inputWhatsappNumber');
+      const waNumber = (waInput && waInput.value.trim()) ? waInput.value.trim().replace(/[^0-9]/g, '') : '919876543210';
+
+      const message = encodeURIComponent(`Heartiest Congratulations to ${bride} & ${groom}! 💐✨\n\nWe are delighted to receive your Tilak & Engagement invitation for 18 October 2026. Sending our warmest blessings and best wishes for your beautiful journey together! 🎉🪔`);
+      const waUrl = `https://wa.me/${waNumber}?text=${message}`;
+      window.open(waUrl, '_blank', 'noopener,noreferrer');
+    });
+  }
+
+  // ==========================================================================
+  // ADD TO GOOGLE / APPLE CALENDAR
+  // ==========================================================================
   addToCalendarBtn.addEventListener('click', () => {
     const bride = document.getElementById('displayBride').innerText.trim();
     const groom = document.getElementById('displayGroom').innerText.trim();
@@ -1181,40 +1126,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const loc = encodeURIComponent(`${venue}, ${location}`);
 
     const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&location=${loc}&dates=${EVENT.calendarStart}/${EVENT.calendarEnd}`;
-
     window.open(googleCalendarUrl, '_blank', 'noopener,noreferrer');
   });
-
-  // ==========================================================================
-  // IDLE PREFETCH ENGINE & SERVICE WORKER
-  // ==========================================================================
-  if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js').catch((err) => {
-        console.log('Service Worker registration skipped:', err);
-      });
-    });
-  }
-
-  function prefetchSecondaryAssets() {
-    const doorIds = ['1', '2', '3', '4', '6'];
-    const prefetch = () => {
-      doorIds.forEach((id) => {
-        const img = new Image();
-        img.src = `/assets/doors/${id}.avif`;
-
-        const vid = document.createElement('video');
-        vid.preload = 'metadata';
-        vid.src = `/assets/doors/${id}.mp4`;
-      });
-    };
-
-    if ('requestIdleCallback' in window) {
-      requestIdleCallback(prefetch, { timeout: 3000 });
-    } else {
-      setTimeout(prefetch, 2000);
-    }
-  }
-
-  prefetchSecondaryAssets();
 });

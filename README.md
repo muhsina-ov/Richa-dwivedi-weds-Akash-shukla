@@ -1,1 +1,1 @@
-# -Richa-weds-akash
+# Richa-weds-akash

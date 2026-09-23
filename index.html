@@ -3,71 +3,82 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Richa Dwivedi & Akash Shukla — Engagement (Tilak) Invitation</title>
+  <title>Richa Dwivedi & Akash Shukla — Royal Engagement (Tilak) Invitation</title>
 
   <!-- Primary SEO Meta Tags -->
-  <meta name="title" content="Richa Dwivedi & Akash Shukla — Engagement (Tilak) Invitation">
+  <meta name="title" content="Richa Dwivedi & Akash Shukla — Royal Engagement (Tilak) Invitation">
   <meta name="description" content="You are cordially invited to the Engagement (Tilak) ceremony of Richa Dwivedi & Akash Shukla on 18 October 2026 at 3:00 PM, Yamuna Velly, Near Aliyapur Toll Plaza.">
   <meta name="keywords" content="Richa Dwivedi, Akash Shukla, engagement invitation, Tilak ceremony, digital wedding invitation, 18 October 2026">
   <meta name="author" content="InviteStory">
-  <meta name="theme-color" content="#5C1A2B">
+  <meta name="theme-color" content="#4A0E1C">
 
   <!-- Open Graph / Facebook / WhatsApp -->
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Richa Dwivedi & Akash Shukla — Engagement (Tilak) Invitation">
+  <meta property="og:title" content="Richa Dwivedi & Akash Shukla — Royal Engagement (Tilak) Invitation">
   <meta property="og:description" content="With the blessings of our families — Engagement (Tilak) Ceremony, 18 October 2026, 3:00 PM at Yamuna Velly, Near Aliyapur Toll Plaza.">
   <meta property="og:image" content="/og-image.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="675">
-  <meta property="og:image:alt" content="Richa Dwivedi and Akash Shukla Engagement Invitation">
+  <meta property="og:image:alt" content="Richa Dwivedi and Akash Shukla Royal Engagement Invitation">
   <meta property="og:site_name" content="InviteStory">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Richa Dwivedi & Akash Shukla — Engagement (Tilak) Invitation">
+  <meta name="twitter:title" content="Richa Dwivedi & Akash Shukla — Royal Engagement (Tilak) Invitation">
   <meta name="twitter:description" content="Engagement (Tilak) Ceremony — 18 October 2026, 3:00 PM, Yamuna Velly, Near Aliyapur Toll Plaza.">
   <meta name="twitter:image" content="/og-image.jpg">
 
-  <!-- Google Fonts -->
+  <!-- Google Fonts: Luxury Serif, Royal Calligraphy, Sanskrit/Classical & Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;600;700;900&family=Cinzel:wght@400;500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Great+Vibes&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- Critical Asset Preloading for Instant Render -->
-  <link rel="preload" href="/assets/doors/1.avif" as="image" type="image/avif" fetchpriority="high">
-  <link rel="preload" href="/assets/gallery/photo-1.webp" as="image" type="image/webp" fetchpriority="high">
+  <!-- Critical Asset Preloads -->
   <link rel="preload" href="/assets/doors/1.mp4" as="video" type="video/mp4">
+  <link rel="preload" href="/assets/audio/wedding-melody.mp3" as="audio" type="audio/mpeg">
+  <link rel="preload" href="/assets/gallery/photo-1.webp" as="image" type="image/webp" fetchpriority="high">
 
   <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-  <!-- Ambient Desktop Background -->
-  <div class="ambient-backdrop" id="ambientBackdrop"></div>
+  <!-- Ambient Deep Velvet Background -->
+  <div class="ambient-backdrop" id="ambientBackdrop">
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+    <div class="ambient-stars"></div>
+  </div>
 
-  <!-- Background YouTube Music Player Container -->
+  <!-- Background Music Audio Elements -->
+  <audio id="weddingAudio" src="/assets/audio/wedding-melody.mp3" loop preload="auto"></audio>
   <div id="youtubePlayerContainer" class="youtube-player-container"></div>
 
   <!-- Top Floating Controls -->
   <header class="top-controls">
     <div class="brand-tag">
-      <span class="sparkle">✦</span> <span class="brand-text">InviteStory</span>
+      <span class="sparkle">✦</span>
+      <span class="brand-text">Royal Invitation</span>
     </div>
     <div class="action-pills">
-      <button id="doorSelectBtn" class="glass-pill-btn" title="Choose Door Style">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16M9 21v-4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v4"/></svg>
-        <span>Door Style</span>
+      <button id="doorSelectBtn" class="glass-pill-btn" title="Choose Door Style" aria-label="Choose Door Style">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16M9 21v-4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v4"/></svg>
+        <span class="pill-label">Doors</span>
       </button>
-      <button id="photoManagerBtn" class="glass-pill-btn" title="Manage Gallery Photos">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-        <span>Photos</span>
+      <button id="photoManagerBtn" class="glass-pill-btn" title="Manage Gallery Photos" aria-label="Manage Gallery Photos">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+        <span class="pill-label">Photos</span>
       </button>
-      <button id="editDetailsBtn" class="glass-pill-btn" title="Edit Invitation Details">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-        <span>Customize</span>
+      <button id="editDetailsBtn" class="glass-pill-btn" title="Customize Invitation" aria-label="Customize Invitation">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        <span class="pill-label">Edit</span>
       </button>
-      <button id="audioToggleBtn" class="glass-pill-btn icon-only" title="Toggle Sound">
-        <svg id="audioIconOn" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-        <svg id="audioIconOff" class="hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+      <button id="audioToggleBtn" class="glass-pill-btn audio-pill" title="Toggle Wedding Music" aria-label="Toggle Wedding Music">
+        <div class="equalizer-bars" id="equalizerBars">
+          <span class="bar bar-1"></span>
+          <span class="bar bar-2"></span>
+          <span class="bar bar-3"></span>
+          <span class="bar bar-4"></span>
+        </div>
+        <span id="audioStatusText" class="audio-text">Music</span>
       </button>
     </div>
   </header>
@@ -76,121 +87,163 @@
   <main class="invitation-wrapper">
     <div class="invitation-card-container" id="invitationContainer">
 
-      <!-- Video & Image Layers (Pure Architecture, NO text overlaid on video) -->
+      <!-- Media Stage: Pure Architectural Door Video & Welcome Entrance -->
       <div class="media-stage" id="mediaStage">
-        <!-- High-res Static Poster Image for instant load -->
-        <img id="doorPoster" src="/assets/doors/1.avif" alt="Architectural Door Cover" class="door-media poster-image active" fetchpriority="high" decoding="async">
-
-        <!-- Video Layer for physical opening animation -->
-        <video id="doorVideo" class="door-media video-player" playsinline webkit-playsinline preload="auto" muted>
+        <!-- Door Video Player (Physical Opening Animation) -->
+        <video id="doorVideo" class="door-media video-player active" playsinline webkit-playsinline preload="auto" muted>
           <source id="videoSource" src="/assets/doors/1.mp4" type="video/mp4">
         </video>
 
         <!-- Freeze Frame Canvas for 100% static hold at video completion -->
         <canvas id="staticFrameCanvas" class="door-media static-canvas"></canvas>
 
-        <!-- Ambient Dust / Light Particle Overlay -->
+        <!-- Golden Floating Stardust & Ambient Light Overlay -->
         <div class="light-dust-particles" id="dustParticles"></div>
 
-        <!-- 3D Depth Floating Petals / Gold Lanterns Overlay -->
+        <!-- 3D Depth Floating Petals & Royal Lanterns Overlay -->
         <div class="floating-lanterns-container" id="lanternsContainer"></div>
 
-        <!-- Tap-To-Open Callout (Disappears immediately on click/tap) -->
-        <div class="tap-to-open-overlay" id="tapOverlay" role="button" tabindex="0" aria-label="Open the invitation">
-          <div class="keyhole-pulse">
-            <div class="ring-pulse"></div>
-            <div class="keyhole-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="10" r="3"/><path d="M12 13v5M9.5 21h5"/></svg>
-            </div>
+        <!-- Royal Welcome Portal Screen (Tap To Enter) -->
+        <div class="tap-to-open-overlay" id="tapOverlay" role="button" tabindex="0" aria-label="Open the royal invitation">
+          <div class="welcome-header-badge">
+            <span class="sacred-om">ॐ</span>
+            <span class="sacred-text">|| श्री गणेशाय नमः ||</span>
+            <span class="sacred-om">ॐ</span>
           </div>
-          <span class="tap-text">TAP TO OPEN</span>
-          <span class="sub-tap-text">Richa &amp; Akash — A Tilak Invitation</span>
+
+          <div class="welcome-monogram-box">
+            <div class="monogram-crest">
+              <span class="crest-letter">R</span>
+              <span class="crest-flourish">❦</span>
+              <span class="crest-letter">A</span>
+            </div>
+            <div class="monogram-title">Richa &amp; Akash</div>
+            <div class="monogram-subtitle">Tilak &amp; Engagement Ceremony</div>
+          </div>
+
+          <div class="royal-seal-button">
+            <div class="seal-glow-ring"></div>
+            <div class="seal-pulse-ring"></div>
+            <div class="royal-wax-seal">
+              <svg class="seal-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="rgba(212, 175, 55, 0.25)"/>
+              </svg>
+            </div>
+            <span class="tap-action-text">TAP TO OPEN</span>
+            <span class="tap-sub-action">✦ Experience Royal Invitation &amp; Music ✦</span>
+          </div>
         </div>
       </div>
 
-      <!-- Wedding Content Overlay (Reveals AFTER door opens and freezes) -->
+      <!-- Wedding Content Overlay (Revealed After Door Opens) -->
       <div class="invitation-overlay hidden" id="invitationOverlay">
-
         <!-- Celebration Confetti Particle Layer -->
         <canvas id="confettiCanvas" class="confetti-canvas"></canvas>
 
+        <!-- Ornate Golden Corner Filigree Frames -->
+        <div class="royal-card-corners">
+          <span class="card-corner corner-top-left"></span>
+          <span class="card-corner corner-top-right"></span>
+          <span class="card-corner corner-bottom-left"></span>
+          <span class="card-corner corner-bottom-right"></span>
+        </div>
+
         <div class="content-scrollable" id="contentScrollable">
 
-          <!-- Invocation / Header Symbol -->
+          <!-- 1. Sacred Invocation Header -->
           <div class="invitation-header animate-element" style="--delay: 0.1s;">
-            <div class="header-calligraphy" id="displayInvocation">|| Shree Ganeshay Namah ||</div>
+            <div class="auspicious-symbol">
+              <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" class="ganesha-svg">
+                <path d="M12 2C9 2 7 4 7 7c0 2 1.5 3.5 3 4.5V14c-2 0-4 1.5-4 4 0 2.5 3 4 6 4s6-1.5 6-4c0-2.5-2-4-4-4v-2.5c1.5-1 3-2.5 3-4.5 0-3-2-5-5-5z" stroke="url(#goldGradient)" fill="rgba(212, 175, 55, 0.1)"/>
+                <circle cx="12" cy="7" r="1.5" fill="#D4AF37"/>
+                <defs>
+                  <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#FBF2C0"/>
+                    <stop offset="50%" stop-color="#D4AF37"/>
+                    <stop offset="100%" stop-color="#996515"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+            <h3 class="header-calligraphy" id="displayInvocation">|| Shree Ganeshay Namah ||</h3>
             <div class="header-divider">
               <span class="line"></span>
-              <span class="diamond">◆</span>
+              <span class="ornament-glyph">❖</span>
               <span class="line"></span>
             </div>
           </div>
 
-          <!-- Blessing Line -->
-          <p class="blessing-text animate-element" style="--delay: 0.18s;" id="displayBlessing">
-            With the blessings of our beloved family and elders,
-          </p>
+          <!-- 2. Heartfelt Family Blessing -->
+          <p class="blessing-text animate-element" style="--delay: 0.18s;" id="displayBlessing">With the blessings of our beloved family and elders,</p>
 
-          <!-- Ceremony Label -->
+          <!-- 3. Ceremony Title & Announcement -->
           <div class="ceremony-block animate-element" style="--delay: 0.28s;">
-            <span class="ceremony-eyebrow" id="displayCeremonyEyebrow">ENGAGEMENT CEREMONY</span>
-            <span class="ceremony-ornament" aria-hidden="true">
-              <svg width="120" height="18" viewBox="0 0 120 18" fill="none">
-                <path d="M2 9h30M88 9h30" stroke="currentColor" stroke-width="1"/>
-                <path d="M60 1c3.5 3.5 6 5.5 6 8s-2.5 4.5-6 8c-3.5-3.5-6-5.5-6-8s2.5-4.5 6-8z" stroke="currentColor" stroke-width="1" fill="none"/>
-                <circle cx="45" cy="9" r="1.6" fill="currentColor"/>
-                <circle cx="75" cy="9" r="1.6" fill="currentColor"/>
-              </svg>
-            </span>
-            <h2 class="ceremony-title" id="displayCeremonyTitle">TILAK</h2>
-          </div>
-
-          <!-- Hero Couple Photo (Gallery Slot 1) -->
-          <div class="hero-photo-frame animate-element" style="--delay: 0.36s;">
-            <button class="hero-photo-btn" data-gallery-index="0" aria-label="Open gallery photo 1">
-              <img id="heroPhoto" src="/assets/gallery/photo-1.webp" alt="Richa Dwivedi and Akash Shukla — engagement photo"
-                   width="1400" height="1750" fetchpriority="high" decoding="async">
-              <span class="photo-corner corner-tl" aria-hidden="true"></span>
-              <span class="photo-corner corner-tr" aria-hidden="true"></span>
-              <span class="photo-corner corner-bl" aria-hidden="true"></span>
-              <span class="photo-corner corner-br" aria-hidden="true"></span>
-            </button>
-          </div>
-
-          <!-- Couple & Groom Names (Main Visual Focus) -->
-          <div class="couple-names-block animate-element" style="--delay: 0.46s;">
-            <h1 class="bride-name" id="displayBride">Richa Dwivedi</h1>
-            <p class="parentage" id="displayBrideParents">Daughter of Late Pratap Narayan Dwivedi &amp; Meera Dwivedi</p>
-            <div class="ampersand-wrapper">
-              <span class="ampersand">&amp;</span>
+            <div class="ceremony-eyebrow-box">
+              <span class="diamond-dot">✦</span>
+              <span class="ceremony-eyebrow" id="displayCeremonyEyebrow">ENGAGEMENT CEREMONY</span>
+              <span class="diamond-dot">✦</span>
             </div>
-            <h1 class="groom-name" id="displayGroom">Akash Shukla</h1>
-            <p class="parentage" id="displayGroomParents">Son of Devi Prasad Shukla (Advocate) &amp; Anita Shukla</p>
+            <div class="ceremony-ornament-arch">
+              <svg width="140" height="20" viewBox="0 0 140 20" fill="none">
+                <path d="M2 10h42M96 10h42" stroke="currentColor" stroke-width="1"/>
+                <path d="M70 2c4 4 7 6 7 9s-3 5-7 9c-4-4-7-6-7-9s3-5 7-9z" stroke="currentColor" stroke-width="1.2" fill="rgba(212, 175, 55, 0.15)"/>
+                <circle cx="54" cy="10" r="1.8" fill="currentColor"/>
+                <circle cx="86" cy="10" r="1.8" fill="currentColor"/>
+              </svg>
+            </div>
+            <h1 class="ceremony-title" id="displayCeremonyTitle">TILAK</h1>
           </div>
 
-          <div class="gold-separator animate-element" style="--delay: 0.56s;" aria-hidden="true"></div>
+          <!-- 4. Royal Couple Names Block -->
+          <div class="couple-names-block animate-element" style="--delay: 0.38s;">
+            <div class="couple-card bride-card">
+              <h2 class="bride-name" id="displayBride">Richa Dwivedi</h2>
+              <p class="parentage" id="displayBrideParents">Daughter of Late Pratap Narayan Dwivedi &amp; Meera Dwivedi</p>
+            </div>
 
-          <!-- Interactive Scratch-to-Reveal Date Card -->
-          <div class="scratch-card-wrapper animate-element" style="--delay: 0.64s;">
+            <div class="royal-ampersand-wrapper">
+              <span class="royal-flourish-line"></span>
+              <span class="royal-ampersand">&amp;</span>
+              <span class="royal-flourish-line"></span>
+            </div>
+
+            <div class="couple-card groom-card">
+              <h2 class="groom-name" id="displayGroom">Akash Shukla</h2>
+              <p class="parentage" id="displayGroomParents">Son of Devi Prasad Shukla (Advocate) &amp; Anita Shukla</p>
+            </div>
+          </div>
+
+          <div class="royal-filigree-divider animate-element" style="--delay: 0.48s;">
+            <span class="filigree-line"></span>
+            <span class="filigree-motif">❧ ✦ ❧</span>
+            <span class="filigree-line"></span>
+          </div>
+
+          <!-- 5. Interactive Gold Foil Scratch / Date Reveal Card -->
+          <div class="scratch-card-wrapper animate-element" style="--delay: 0.56s;">
             <div class="scratch-card-container" id="scratchContainer">
-              <!-- Underneath Date Card -->
+              <!-- Underneath Date Card (Gold Embossed) -->
               <div class="date-time-card" id="dateTimeCard">
+                <div class="date-badge-top">AUSPICIOUS MUHURAT</div>
                 <div class="date-day" id="displayDay">SUNDAY</div>
                 <div class="date-main">
                   <span class="date-month" id="displayMonth">OCTOBER</span>
                   <span class="date-num" id="displayDateNum">18</span>
                   <span class="date-year" id="displayYear">2026</span>
                 </div>
-                <div class="date-time" id="displayTime">3:00 PM</div>
+                <div class="date-time-box">
+                  <span class="time-clock-icon">🕒</span>
+                  <span class="date-time" id="displayTime">3:00 PM</span>
+                </div>
               </div>
 
-              <!-- Gold Scratch Foil Canvas -->
+              <!-- Shimmering Gold Scratch Foil Canvas -->
               <canvas id="scratchCanvas" class="scratch-canvas"></canvas>
 
               <!-- Scratch Hint Badge -->
               <div class="scratch-hint-badge" id="scratchHint">
                 <span class="sparkle-icon" aria-hidden="true">✦</span>
-                <span>Scratch foil to reveal date</span>
+                <span>Scratch gold foil to reveal date</span>
               </div>
             </div>
 
@@ -199,8 +252,36 @@
             </button>
           </div>
 
-          <!-- Live Countdown Row -->
+          <!-- 6. Auspicious Timeline Program -->
+          <div class="program-itinerary animate-element" style="--delay: 0.66s;">
+            <div class="itinerary-item">
+              <div class="itinerary-icon">🪔</div>
+              <div class="itinerary-details">
+                <span class="itinerary-name">Tilak &amp; Sagai</span>
+                <span class="itinerary-time">3:00 PM</span>
+              </div>
+            </div>
+            <div class="itinerary-separator">✦</div>
+            <div class="itinerary-item">
+              <div class="itinerary-icon">💍</div>
+              <div class="itinerary-details">
+                <span class="itinerary-name">Ring Exchange</span>
+                <span class="itinerary-time">4:30 PM</span>
+              </div>
+            </div>
+            <div class="itinerary-separator">✦</div>
+            <div class="itinerary-item">
+              <div class="itinerary-icon">🍽️</div>
+              <div class="itinerary-details">
+                <span class="itinerary-name">Royal Dinner</span>
+                <span class="itinerary-time">6:00 PM</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 7. Live Royal Countdown Clock -->
           <div class="countdown-section animate-element" style="--delay: 0.74s;">
+            <div class="countdown-heading">COUNTING DOWN TO THE CELEBRATION</div>
             <div class="countdown-grid" id="countdownGrid" role="timer" aria-label="Countdown to the ceremony">
               <div class="countdown-pill">
                 <span class="countdown-num" id="cdDays">00</span>
@@ -221,21 +302,26 @@
             </div>
           </div>
 
-          <!-- Venue & Location Block -->
+          <!-- 8. Palatial Venue & Location Card -->
           <div class="venue-block animate-element" style="--delay: 0.84s;">
-            <span class="venue-eyebrow">VENUE</span>
+            <div class="venue-ornament">🏛️</div>
+            <span class="venue-eyebrow">ROYAL VENUE</span>
             <h3 class="venue-name" id="displayVenue">YAMUNA VELLY</h3>
             <p class="venue-location" id="displayLocation">Near Aliyapur Toll Plaza</p>
+            <button class="venue-map-link-btn" id="venueInlineMapBtn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span>View Location on Map</span>
+            </button>
           </div>
 
-          <!-- Photo Gallery Section (Exactly 7 Images) -->
+          <!-- 9. Photo Gallery (7 Curated Moments) -->
           <section class="gallery-section animate-element" style="--delay: 0.94s;" aria-label="Photo gallery">
             <div class="section-heading">
-              <span class="section-eyebrow">OUR MEMORIES</span>
-              <h3 class="section-title">A Collection of Cherished Moments</h3>
+              <span class="section-eyebrow">MEMORIES &amp; CHERISHED MOMENTS</span>
+              <h3 class="section-title">Our Story of Togetherness</h3>
               <div class="header-divider wide">
                 <span class="line"></span>
-                <span class="diamond">◆</span>
+                <span class="ornament-glyph">❖</span>
                 <span class="line"></span>
               </div>
             </div>
@@ -255,48 +341,57 @@
               </button>
               <button class="gallery-item" data-gallery-index="3" aria-label="Open photo 4 of 7">
                 <img class="gallery-img" data-slot="4" src="/assets/gallery/photo-4.webp" alt="Richa Dwivedi and Akash Shukla — couple photo" width="1100" height="1467" loading="lazy" decoding="async">
-                <span class="gallery-item-label">Us</span>
+                <span class="gallery-item-label">Cherished</span>
               </button>
               <button class="gallery-item gold-frame" data-gallery-index="4" aria-label="Open photo 5 of 7">
                 <img class="gallery-img" data-slot="5" src="/assets/gallery/photo-5.webp" alt="Family photo" width="1100" height="1467" loading="lazy" decoding="async">
-                <span class="gallery-item-label">Family</span>
+                <span class="gallery-item-label">Family Blessings</span>
               </button>
               <button class="gallery-item" data-gallery-index="5" aria-label="Open photo 6 of 7">
                 <img class="gallery-img" data-slot="6" src="/assets/gallery/photo-6.webp" alt="Family and couple photo" width="1100" height="1467" loading="lazy" decoding="async">
-                <span class="gallery-item-label">Together</span>
+                <span class="gallery-item-label">Celebration</span>
               </button>
               <button class="gallery-item span-half" data-gallery-index="6" aria-label="Open photo 7 of 7">
                 <img class="gallery-img" data-slot="7" src="/assets/gallery/photo-7.webp" alt="Additional cherished memory photo" width="1100" height="1467" loading="lazy" decoding="async">
                 <span class="gallery-item-label">Memories</span>
               </button>
             </div>
+            <button class="view-gallery-btn" data-gallery-index="0" aria-label="Open Fullscreen Gallery">
+              <span class="sparkle">✦</span> <span>View Fullscreen Gallery (7 Photos)</span>
+            </button>
           </section>
 
-          <!-- Closing Blessing -->
+          <!-- 10. Closing Honors & Warm Regards -->
           <div class="closing-block animate-element" style="--delay: 1.04s;">
-            <span class="closing-ornament" aria-hidden="true">❦</span>
-            <p class="closing-label">With Warm Regards</p>
-            <p class="closing-families" id="displayFamilies">The Dwivedi &amp; Shukla Families</p>
+            <div class="closing-crest">❦ ❖ ❦</div>
+            <p class="closing-label">With Best Compliments &amp; Warm Regards</p>
+            <h3 class="closing-families" id="displayFamilies">The Dwivedi &amp; Shukla Families</h3>
+            <p class="closing-subtext">We eagerly await to welcome you to our family celebration.</p>
           </div>
 
-          <!-- Action Buttons Grid -->
+          <!-- 11. Guest Action Suite (Calendar, WhatsApp RSVP, Map) -->
           <div class="action-buttons-grid animate-element" style="--delay: 1.12s;">
             <button class="primary-gold-btn" id="addToCalendarBtn">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
               <span>Add to Calendar</span>
             </button>
 
+            <button class="whatsapp-rsvp-btn" id="whatsappRsvpBtn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+              <span>Send Blessings (RSVP)</span>
+            </button>
+
             <button class="secondary-glass-btn" id="openMapBtn">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-              <span>Location</span>
+              <span>Venue Directions</span>
             </button>
           </div>
 
-          <!-- Replay Footer -->
+          <!-- 12. Replay Experience Footer -->
           <div class="invitation-footer animate-element" style="--delay: 1.2s;">
             <button id="replayBtn" class="text-link-btn">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
-              Replay Door Opening
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+              <span>Replay Door Opening &amp; Sound</span>
             </button>
           </div>
 
@@ -476,7 +571,12 @@
         </div>
 
         <div class="form-group">
-          <label for="inputYoutubeUrl">Background Music (YouTube Song / Video URL)</label>
+          <label for="inputWhatsappNumber">WhatsApp RSVP Number (with Country Code)</label>
+          <input type="text" id="inputWhatsappNumber" placeholder="e.g. 919876543210" value="919876543210">
+        </div>
+
+        <div class="form-group">
+          <label for="inputYoutubeUrl">Custom Background Music (YouTube Song URL - Optional)</label>
           <input type="text" id="inputYoutubeUrl" placeholder="e.g. https://www.youtube.com/watch?v=..." value="">
         </div>
 
@@ -494,7 +594,7 @@
         <h2>Gallery Photos</h2>
         <button class="close-modal-btn" id="closePhotoManager" aria-label="Close">&times;</button>
       </div>
-      <p class="photo-manager-hint">Upload or replace any photo individually. All 7 are optional — images are optimized automatically.</p>
+      <p class="photo-manager-hint">Upload or replace any photo individually. All 7 are customizable — images are compressed and optimized automatically.</p>
       <div class="photo-slots-grid" id="photoSlotsGrid">
         <!-- Slots rendered by main.js -->
       </div>
@@ -518,7 +618,7 @@
           <div class="map-pin">
             <div class="pin-pulse"></div>
             <div class="pin-head" aria-hidden="true">
-              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#D4AF61" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
             </div>
           </div>
           <span class="map-label" id="mapMockLabel">Yamuna Velly</span>
