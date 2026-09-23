@@ -36,6 +36,7 @@
   <!-- Critical Asset Preloads -->
   <link rel="preload" href="/assets/doors/1.mp4" as="video" type="video/mp4">
   <link rel="preload" href="/assets/audio/wedding-melody.mp3" as="audio" type="audio/mpeg">
+  <link rel="preload" href="/assets/icons/gold-ganesha.webp" as="image" type="image/webp">
   <link rel="preload" href="/assets/gallery/photo-1.webp" as="image" type="image/webp" fetchpriority="high">
 
   <link rel="stylesheet" href="./style.css">
@@ -60,7 +61,7 @@
     <div class="action-pills">
       <button id="flowerShowerBtn" class="glass-pill-btn pushpa-btn" title="Shower Rose Petals" aria-label="Shower Rose Petals">
         <span class="flower-icon">🌸</span>
-        <span class="pill-label">Pushpa Vrishti</span>
+        <span class="pill-label">Flower Shower</span>
       </button>
       <button id="audioToggleBtn" class="glass-pill-btn audio-pill" title="Toggle Wedding Music" aria-label="Toggle Wedding Music">
         <div class="equalizer-bars playing" id="equalizerBars">
@@ -97,9 +98,9 @@
         <!-- Royal Welcome Portal Screen (Tap To Enter) -->
         <div class="tap-to-open-overlay" id="tapOverlay" role="button" tabindex="0" aria-label="Open the royal invitation">
           <div class="welcome-header-badge">
-            <span class="sacred-om">ॐ</span>
-            <span class="sacred-text">|| श्री गणेशाय नमः ||</span>
-            <span class="sacred-om">ॐ</span>
+            <span class="sparkle">✦</span>
+            <span class="sacred-text">|| Shree Ganeshay Namah ||</span>
+            <span class="sparkle">✦</span>
           </div>
 
           <div class="welcome-monogram-box">
@@ -116,9 +117,7 @@
             <div class="seal-glow-ring"></div>
             <div class="seal-pulse-ring"></div>
             <div class="royal-wax-seal">
-              <svg class="seal-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="rgba(212, 175, 55, 0.25)"/>
-              </svg>
+              <img src="/assets/icons/gold-kalash.webp" alt="Royal Seal" class="seal-inner-img" width="34" height="34">
             </div>
             <span class="tap-action-text">TAP TO OPEN</span>
             <span class="tap-sub-action">✦ Experience Royal Invitation &amp; Music ✦</span>
@@ -141,27 +140,18 @@
 
         <div class="content-scrollable" id="contentScrollable">
 
-          <!-- 1. Sacred Invocation & Ganesh Shloka -->
+          <!-- 1. Sacred Invocation with Real 3D Gold Ganesha Icon -->
           <div class="invitation-header animate-element" style="--delay: 0.1s;">
             <div class="auspicious-symbol">
-              <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" class="ganesha-svg">
-                <path d="M12 2C9 2 7 4 7 7c0 2 1.5 3.5 3 4.5V14c-2 0-4 1.5-4 4 0 2.5 3 4 6 4s6-1.5 6-4c0-2.5-2-4-4-4v-2.5c1.5-1 3-2.5 3-4.5 0-3-2-5-5-5z" stroke="url(#goldGradient)" fill="rgba(212, 175, 55, 0.12)"/>
-                <circle cx="12" cy="7" r="1.5" fill="#D4AF37"/>
-                <defs>
-                  <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#FBF2C0"/>
-                    <stop offset="50%" stop-color="#D4AF37"/>
-                    <stop offset="100%" stop-color="#996515"/>
-                  </linearGradient>
-                </defs>
-              </svg>
+              <div class="gold-icon-frame">
+                <img src="/assets/icons/gold-ganesha.webp" alt="Lord Ganesha" class="real-gold-icon ganesha-icon" width="76" height="76">
+              </div>
             </div>
             <h3 class="header-calligraphy" id="displayInvocation">|| Shree Ganeshay Namah ||</h3>
 
-            <!-- Sacred Sanskrit Shloka -->
-            <div class="shloka-box">
-              <p class="sanskrit-text">वक्रतुण्ड महाकाय सूर्यकोटि समप्रभ ।<br>निर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा ॥</p>
-              <p class="shloka-meaning">"May Lord Ganesha remove all obstacles and shower his divine blessings upon our new beginning."</p>
+            <!-- Auspicious Invocation Note in English -->
+            <div class="blessing-card-note">
+              <p class="blessing-card-quote">"May the divine grace of Lord Ganesha bless this union with prosperity, wisdom, and eternal joy."</p>
             </div>
 
             <div class="header-divider">
@@ -217,12 +207,12 @@
             <span class="filigree-line"></span>
           </div>
 
-          <!-- 5. Interactive Gold Foil Scratch / Date Reveal Card -->
+          <!-- 5. Interactive Gold Foil Scratch / Date Reveal Card with 3D Rings Icon -->
           <div class="scratch-card-wrapper animate-element" style="--delay: 0.56s;">
             <div class="scratch-card-container" id="scratchContainer">
               <!-- Underneath Date Card (Gold Embossed) -->
               <div class="date-time-card" id="dateTimeCard">
-                <div class="date-badge-top">AUSPICIOUS MUHURAT</div>
+                <div class="date-badge-top">AUSPICIOUS OCCASION</div>
                 <div class="date-day" id="displayDay">SUNDAY</div>
                 <div class="date-main">
                   <span class="date-month" id="displayMonth">OCTOBER</span>
@@ -250,18 +240,22 @@
             </button>
           </div>
 
-          <!-- 6. Auspicious Rituals Program -->
+          <!-- 6. Auspicious Rituals Program with Real 3D Icons -->
           <div class="program-itinerary animate-element" style="--delay: 0.66s;">
             <div class="itinerary-item">
-              <div class="itinerary-icon">🪔</div>
+              <div class="itinerary-thumb">
+                <img src="/assets/icons/gold-kalash.webp" alt="Tilak" class="itinerary-icon-img" width="34" height="34">
+              </div>
               <div class="itinerary-details">
-                <span class="itinerary-name">Tilak &amp; Sagai</span>
+                <span class="itinerary-name">Tilak Ceremony</span>
                 <span class="itinerary-time">3:00 PM</span>
               </div>
             </div>
             <div class="itinerary-separator">✦</div>
             <div class="itinerary-item">
-              <div class="itinerary-icon">💍</div>
+              <div class="itinerary-thumb">
+                <img src="/assets/icons/gold-rings.webp" alt="Rings" class="itinerary-icon-img" width="34" height="34">
+              </div>
               <div class="itinerary-details">
                 <span class="itinerary-name">Ring Exchange</span>
                 <span class="itinerary-time">4:30 PM</span>
@@ -269,7 +263,9 @@
             </div>
             <div class="itinerary-separator">✦</div>
             <div class="itinerary-item">
-              <div class="itinerary-icon">🍽️</div>
+              <div class="itinerary-thumb">
+                <img src="/assets/icons/gold-ganesha.webp" alt="Blessings" class="itinerary-icon-img" width="34" height="34">
+              </div>
               <div class="itinerary-details">
                 <span class="itinerary-name">Royal Dinner</span>
                 <span class="itinerary-time">6:00 PM</span>
@@ -280,8 +276,9 @@
           <!-- 7. Royal Attire & Theme Guide -->
           <div class="attire-theme-card animate-element" style="--delay: 0.72s;">
             <div class="attire-header">
-              <span class="attire-icon">👑</span>
-              <span class="attire-title">ROYAL DRESS CODE &amp; PALETTE</span>
+              <span class="sparkle">✦</span>
+              <span class="attire-title">ROYAL DRESS CODE &amp; THEME</span>
+              <span class="sparkle">✦</span>
             </div>
             <p class="attire-desc">Traditional Royal Indian Ethnic / Festive Elegance</p>
             <div class="palette-swatches">
@@ -327,9 +324,11 @@
             </div>
           </div>
 
-          <!-- 9. Palatial Venue & Navigation Card -->
+          <!-- 9. Palatial Venue & Navigation Card with 3D Emblem -->
           <div class="venue-block animate-element" style="--delay: 0.84s;">
-            <div class="venue-ornament">🏛️</div>
+            <div class="venue-icon-box">
+              <img src="/assets/icons/gold-kalash.webp" alt="Venue" class="venue-gold-icon" width="40" height="40">
+            </div>
             <span class="venue-eyebrow">ROYAL VENUE</span>
             <h3 class="venue-name" id="displayVenue">YAMUNA VELLY</h3>
             <p class="venue-location" id="displayLocation">Near Aliyapur Toll Plaza</p>
@@ -341,11 +340,11 @@
             </div>
           </div>
 
-          <!-- 10. Photo Gallery (7 Curated Moments) -->
+          <!-- 10. Photo Gallery (7 Curated Moments - Perfectly Fitted) -->
           <section class="gallery-section animate-element" style="--delay: 0.94s;" aria-label="Photo gallery">
             <div class="section-heading">
-              <span class="section-eyebrow">MEMORIES &amp; CHERISHED MOMENTS</span>
-              <h3 class="section-title">Our Story of Togetherness</h3>
+              <span class="section-eyebrow">CHERISHED MOMENTS</span>
+              <h3 class="section-title">Our Journey of Togetherness</h3>
               <div class="header-divider wide">
                 <span class="line"></span>
                 <span class="ornament-glyph">❖</span>
@@ -388,16 +387,17 @@
             </button>
           </section>
 
-          <!-- 11. Quick Blessings & Wishes Box -->
+          <!-- 11. Quick Blessings & Wishes Box (English) -->
           <div class="wishes-box-card animate-element" style="--delay: 1.0s;">
             <div class="wishes-title">
-              <span class="wishes-icon">💌</span>
-              <span>Send Your Warm Blessings</span>
+              <span class="sparkle">✦</span>
+              <span>Send Your Warm Wishes &amp; Blessings</span>
+              <span class="sparkle">✦</span>
             </div>
             <div class="blessing-chips-grid">
-              <button class="blessing-chip active" data-blessing="Heartiest Congratulations to Richa & Akash! 💐 Wishing you eternal happiness and togetherness.">Sada Saubhagyawati Bhava 🪔</button>
-              <button class="blessing-chip" data-blessing="Wishing Richa & Akash a lifetime of eternal love, prosperity, and joy! ✨">Eternal Love & Joy ❤️</button>
-              <button class="blessing-chip" data-blessing="Warmest congratulations to the Dwivedi & Shukla families on this auspicious Tilak ceremony! 🎉">Congratulations Families 💐</button>
+              <button class="blessing-chip active" data-blessing="Heartiest Congratulations to Richa & Akash! 💐 Wishing you eternal love, happiness and prosperity on your Tilak ceremony.">Wishing you eternal love &amp; joy 💐</button>
+              <button class="blessing-chip" data-blessing="Warmest congratulations to the Dwivedi & Shukla families! May this new beginning be filled with abundant blessings. ✨">Congratulations to both families ✨</button>
+              <button class="blessing-chip" data-blessing="Sending our warmest blessings to the beautiful couple Richa & Akash for a glorious journey together! 🪔">Blessings for a beautiful future 🪔</button>
             </div>
             <button class="whatsapp-rsvp-btn" id="whatsappRsvpBtn">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
@@ -410,7 +410,7 @@
             <div class="closing-crest">❦ ❖ ❦</div>
             <p class="closing-label">With Best Compliments &amp; Warm Regards</p>
             <h3 class="closing-families" id="displayFamilies">The Dwivedi &amp; Shukla Families</h3>
-            <p class="closing-subtext">We eagerly await to welcome you to our family celebration.</p>
+            <p class="closing-subtext">We eagerly look forward to welcoming you to our family celebration.</p>
           </div>
 
           <!-- 13. Guest Action Suite (Calendar, Map, Replay) -->
@@ -474,7 +474,7 @@
           <div class="map-pin">
             <div class="pin-pulse"></div>
             <div class="pin-head" aria-hidden="true">
-              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <img src="/assets/icons/gold-kalash.webp" alt="Pin" width="28" height="28">
             </div>
           </div>
           <span class="map-label" id="mapMockLabel">Yamuna Velly</span>

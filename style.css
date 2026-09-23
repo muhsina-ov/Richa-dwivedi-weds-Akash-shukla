@@ -83,7 +83,7 @@ body {
 }
 
 /* ==========================================================================
-   AMBIENT BACKGROUND (DEEP VELVET PALACE LIGHTING)
+   AMBIENT BACKGROUND
    ========================================================================== */
 .ambient-backdrop {
   position: fixed;
@@ -133,7 +133,7 @@ body {
 }
 
 /* ==========================================================================
-   TOP CONTROLS & EQUALIZER (PRISTINE GUEST HEADER)
+   TOP CONTROLS & EQUALIZER
    ========================================================================== */
 .top-controls {
   position: fixed;
@@ -284,7 +284,7 @@ body {
 }
 
 /* ==========================================================================
-   MAIN INVITATION WRAPPER & 9:16 CARD
+   MAIN INVITATION WRAPPER & 9:16 CARD (FIT TO SCREEN)
    ========================================================================== */
 .invitation-wrapper {
   position: relative;
@@ -319,7 +319,7 @@ body {
 }
 
 /* ==========================================================================
-   MEDIA STAGE & CLEAN WELCOME SCREEN (NO STATIC IMAGE)
+   MEDIA STAGE & CLEAN WELCOME SCREEN
    ========================================================================== */
 .media-stage {
   position: absolute;
@@ -481,11 +481,6 @@ body {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
-.sacred-om {
-  font-size: 1.1rem;
-  color: var(--color-gold-bright);
-}
-
 .sacred-text {
   font-family: var(--font-serif);
   font-size: 0.78rem;
@@ -590,9 +585,16 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-gold-light);
+  overflow: hidden;
   box-shadow: 0 0 25px rgba(212, 175, 55, 0.5), inset 0 2px 6px rgba(255, 255, 255, 0.4);
   transition: transform 0.3s ease;
+}
+
+.seal-inner-img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  border-radius: 50%;
 }
 
 .tap-to-open-overlay:hover .royal-wax-seal {
@@ -707,7 +709,7 @@ body {
   scrollbar-width: thin;
   scrollbar-color: var(--color-gold-deep) var(--color-cream);
   -webkit-overflow-scrolling: touch;
-  padding: 40px 22px 50px;
+  padding: 40px 20px 50px;
   padding-bottom: max(50px, env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
@@ -741,13 +743,29 @@ body {
   transform: translateY(0);
 }
 
-/* 1. Auspicious Invocation & Ganesh Shloka */
+/* 1. Auspicious Invocation Header with Real 3D Gold Ganesha */
 .auspicious-symbol {
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
-.ganesha-svg {
-  filter: drop-shadow(0 2px 6px rgba(153, 101, 21, 0.25));
+.gold-icon-frame {
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #521020 0%, #26050D 100%);
+  border: 1.5px solid var(--color-gold);
+  padding: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 18px rgba(74, 14, 28, 0.35), inset 0 0 10px rgba(212, 175, 55, 0.4);
+}
+
+.real-gold-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
 }
 
 .header-calligraphy {
@@ -761,29 +779,21 @@ body {
   text-shadow: 0 1px 2px rgba(153, 101, 21, 0.2);
 }
 
-.shloka-box {
-  margin: 10px 0 6px;
-  padding: 10px 14px;
+.blessing-card-note {
+  margin: 8px 0 6px;
+  padding: 8px 14px;
   background: rgba(255, 255, 255, 0.65);
-  border: 1px dashed rgba(212, 175, 55, 0.55);
+  border: 1px solid rgba(212, 175, 55, 0.35);
   border-radius: 12px;
   max-width: 330px;
 }
 
-.sanskrit-text {
-  font-family: var(--font-serif);
-  font-size: 0.88rem;
-  font-weight: 600;
-  line-height: 1.45;
-  color: var(--color-maroon);
-}
-
-.shloka-meaning {
+.blessing-card-quote {
   font-family: var(--font-body);
-  font-size: 0.86rem;
+  font-size: 0.95rem;
   font-style: italic;
-  color: var(--color-text-muted-ivory);
-  margin-top: 4px;
+  font-weight: 500;
+  color: var(--color-maroon);
   line-height: 1.35;
 }
 
@@ -947,7 +957,7 @@ body {
 .scratch-card-wrapper {
   width: 100%;
   max-width: 350px;
-  margin-bottom: 22px;
+  margin-bottom: 20px;
 }
 
 .scratch-card-container {
@@ -973,7 +983,7 @@ body {
 }
 
 .date-time-card {
-  padding: 18px 16px 22px;
+  padding: 16px 14px 20px;
   width: 100%;
   text-align: center;
 }
@@ -988,7 +998,7 @@ body {
   padding: 3px 12px;
   border-radius: 12px;
   background: rgba(0, 0, 0, 0.3);
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .date-day {
@@ -1029,7 +1039,7 @@ body {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  margin-top: 8px;
+  margin-top: 6px;
 }
 
 .time-clock-icon {
@@ -1085,7 +1095,7 @@ body {
 }
 
 .quick-reveal-btn {
-  margin-top: 8px;
+  margin-top: 6px;
   background: none;
   border: none;
   color: var(--color-gold-deep);
@@ -1104,7 +1114,7 @@ body {
   background: rgba(212, 175, 55, 0.15);
 }
 
-/* 6. Auspicious Program Itinerary */
+/* 6. Auspicious Rituals Program with 3D Icons */
 .program-itinerary {
   display: flex;
   justify-content: space-around;
@@ -1114,7 +1124,7 @@ body {
   background: rgba(255, 255, 255, 0.72);
   border: 1px solid rgba(212, 175, 55, 0.4);
   border-radius: 14px;
-  padding: 12px 10px;
+  padding: 10px 8px;
   margin-bottom: 18px;
   box-shadow: 0 4px 16px rgba(74, 14, 28, 0.05);
 }
@@ -1123,17 +1133,34 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3px;
+  gap: 4px;
 }
 
-.itinerary-icon {
-  font-size: 1.15rem;
+.itinerary-thumb {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #521020;
+  border: 1px solid var(--color-gold);
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(74, 14, 28, 0.25);
+}
+
+.itinerary-icon-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
 }
 
 .itinerary-name {
   font-family: var(--font-serif);
   font-size: 0.66rem;
-  letter-spacing: 0.8px;
+  letter-spacing: 0.5px;
   font-weight: 600;
   color: var(--color-maroon);
 }
@@ -1159,7 +1186,7 @@ body {
   border: 1px solid rgba(212, 175, 55, 0.4);
   border-radius: 14px;
   padding: 12px 14px;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
   box-shadow: 0 4px 16px rgba(74, 14, 28, 0.05);
 }
 
@@ -1171,13 +1198,9 @@ body {
   margin-bottom: 2px;
 }
 
-.attire-icon {
-  font-size: 0.95rem;
-}
-
 .attire-title {
   font-family: var(--font-serif);
-  font-size: 0.66rem;
+  font-size: 0.68rem;
   letter-spacing: 2.5px;
   font-weight: 700;
   color: var(--color-gold-deep);
@@ -1229,7 +1252,7 @@ body {
 .countdown-section {
   width: 100%;
   max-width: 350px;
-  margin-bottom: 22px;
+  margin-bottom: 20px;
 }
 
 .countdown-heading {
@@ -1284,13 +1307,27 @@ body {
   border: 1.5px solid rgba(212, 175, 55, 0.45);
   border-radius: 16px;
   padding: 16px 14px;
-  margin-bottom: 22px;
+  margin-bottom: 20px;
   box-shadow: 0 6px 20px rgba(74, 14, 28, 0.06);
 }
 
-.venue-ornament {
-  font-size: 1.4rem;
-  margin-bottom: 2px;
+.venue-icon-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #521020;
+  border: 1.5px solid var(--color-gold);
+  margin: 0 auto 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.venue-gold-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .venue-eyebrow {
@@ -1350,15 +1387,15 @@ body {
   box-shadow: 0 6px 16px rgba(74, 14, 28, 0.35);
 }
 
-/* 10. Photo Gallery (7 Curated Slots) */
+/* 10. Photo Gallery (7 Curated Slots - Fitted to Viewport) */
 .gallery-section {
   width: 100%;
   max-width: 360px;
-  margin-bottom: 22px;
+  margin-bottom: 20px;
 }
 
 .section-heading {
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .section-eyebrow {
@@ -1382,7 +1419,7 @@ body {
 .gallery-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 8px;
 }
 
 .gallery-item {
@@ -1451,7 +1488,7 @@ body {
 }
 
 .view-gallery-btn {
-  margin-top: 12px;
+  margin-top: 10px;
   background: rgba(74, 14, 28, 0.06);
   border: 1px solid rgba(212, 175, 55, 0.45);
   color: var(--color-maroon);
@@ -1484,7 +1521,7 @@ body {
   border: 1.5px solid rgba(212, 175, 55, 0.45);
   border-radius: 16px;
   padding: 14px;
-  margin-bottom: 22px;
+  margin-bottom: 20px;
   box-shadow: 0 6px 20px rgba(74, 14, 28, 0.06);
 }
 
@@ -1495,7 +1532,7 @@ body {
   gap: 6px;
   font-family: var(--font-serif);
   font-size: 0.72rem;
-  letter-spacing: 1.5px;
+  letter-spacing: 1px;
   font-weight: 700;
   color: var(--color-maroon);
   margin-bottom: 10px;
@@ -1560,7 +1597,7 @@ body {
 
 /* 12. Closing Honors Block */
 .closing-block {
-  margin-bottom: 22px;
+  margin-bottom: 20px;
 }
 
 .closing-crest {
@@ -1950,7 +1987,7 @@ body {
   }
 
   .content-scrollable {
-    padding: 50px 16px 44px;
+    padding: 50px 14px 44px;
   }
 
   .ceremony-title {
