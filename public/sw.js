@@ -1,9 +1,10 @@
 // InviteStory - Royal Tilak Invitation Service Worker
-const CACHE_NAME = 'royal-tilak-invite-v4';
+const CACHE_NAME = 'royal-tilak-invite-v5';
 
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
+  '/og-image-square.jpg',
   '/og-image.jpg',
   '/assets/audio/wedding-melody.mp3',
   '/assets/doors/1.mp4',

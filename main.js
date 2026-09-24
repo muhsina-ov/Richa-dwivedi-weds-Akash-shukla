@@ -686,6 +686,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  const shareWhatsappBtn = document.getElementById('shareWhatsappBtn');
+  if (shareWhatsappBtn) {
+    shareWhatsappBtn.addEventListener('click', () => {
+      const shareText = encodeURIComponent(
+        `🚩 *Richa Dwivedi & Akash Shukla — Royal Tilak Ceremony* 🚩\n\n` +
+        `You are cordially invited to celebrate our Royal Tilak & Engagement Ceremony!\n\n` +
+        `📅 *Date:* Sunday, 18 October 2026 at 3:00 PM\n` +
+        `📍 *Venue:* Yamuna Velly, Near Aliyapur Toll Plaza\n\n` +
+        `✨ Tap to open the digital interactive invitation card:\n` +
+        `https://richa-akash.invitestory.in/`
+      );
+      window.open(`https://api.whatsapp.com/send?text=${shareText}`, '_blank', 'noopener,noreferrer');
+    });
+  }
+
   // ==========================================================================
   // PREMIUM SCHEDULE CAROUSEL — Swipe · Drag · Arrow · Dot
   // ==========================================================================
