@@ -1,38 +1,34 @@
 /* ==========================================================================
-   ROYAL INDIAN WEDDING (TILAK) INVITATION — LOGIC & AUDIO ENGINE
+   ROYAL INDIAN WEDDING (TILAK) INVITATION — BULLETPROOF LOGIC & AUDIO ENGINE
+   Richa Dwivedi & Akash Shukla — Pure English Ultra-Luxury Edition
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
   // Media & Canvas Elements
   const video = document.getElementById('doorVideo');
   const staticCanvas = document.getElementById('staticFrameCanvas');
-  const canvasCtx = staticCanvas.getContext('2d');
+  const canvasCtx = staticCanvas ? staticCanvas.getContext('2d') : null;
 
   const tapOverlay = document.getElementById('tapOverlay');
   const invitationOverlay = document.getElementById('invitationOverlay');
   const lanternsContainer = document.getElementById('lanternsContainer');
   const contentScrollable = document.getElementById('contentScrollable');
+  const mediaStage = document.getElementById('mediaStage');
 
   // Top Controls & Buttons
   const flowerShowerBtn = document.getElementById('flowerShowerBtn');
-  const audioToggleBtn = document.getElementById('audioToggleBtn');
-  const equalizerBars = document.getElementById('equalizerBars');
-  const audioStatusText = document.getElementById('audioStatusText');
   const replayBtn = document.getElementById('replayBtn');
   const whatsappRsvpBtn = document.getElementById('whatsappRsvpBtn');
   const addToCalendarBtn = document.getElementById('addToCalendarBtn');
   const openMapBtn = document.getElementById('openMapBtn');
   const mapModal = document.getElementById('mapModal');
   const closeMapModal = document.getElementById('closeMapModal');
+  const interactiveDiya = document.getElementById('interactiveDiya');
+  const diyaHintText = document.getElementById('diyaHintText');
 
-  // Audio Elements & State
-  const weddingAudio = document.getElementById('weddingAudio');
-  let audioCtx = null;
-  let synthGainNode = null;
-  let synthOscillators = [];
-  let isAudioMuted = false;
   let isPlaying = false;
   let hasOpened = false;
+  let autoRevealTimeout = null;
 
   // ==========================================================================
   // EVENT CONSTANTS
@@ -40,134 +36,29 @@ document.addEventListener('DOMContentLoaded', () => {
   const EVENT = {
     countdownTarget: new Date('2026-10-18T15:00:00').getTime(),
     calendarStart: '20261018T093000Z', // 3:00 PM IST
-    calendarEnd: '20261018T130000Z',
+    calendarEnd: '20261018T143000Z',
   };
 
   // ==========================================================================
-  // AUDIO ENGINE (HTML5 AUDIO + WEB AUDIO RAAG SYNTHESIZER)
+  // INTERACTIVE AUSPICIOUS DIYA LIGHTING
   // ==========================================================================
-  function initAudioEngine() {
-    if (!audioCtx) {
-      const AudioContext = window.AudioContext || window.webkitAudioContext;
-      if (AudioContext) {
-        audioCtx = new AudioContext();
+  if (interactiveDiya) {
+    interactiveDiya.addEventListener('click', () => {
+      interactiveDiya.classList.remove('diya-lit');
+      void interactiveDiya.offsetWidth;
+      interactiveDiya.classList.add('diya-lit');
+
+      triggerPushpaVrishti();
+
+      if (diyaHintText) {
+        diyaHintText.textContent = 'Divine Light Ignited with Eternal Blessings ✦';
       }
-    }
-    if (audioCtx && audioCtx.state === 'suspended') {
-      audioCtx.resume();
-    }
-  }
+    });
 
-  // Web Audio Synth Fallback (Classical Indian Tanpura & Shehnai Harmony)
-  function startIndianSynthRaga() {
-    if (!audioCtx || isAudioMuted || synthGainNode) return;
-
-    try {
-      synthGainNode = audioCtx.createGain();
-      synthGainNode.gain.setValueAtTime(0.01, audioCtx.currentTime);
-      synthGainNode.gain.exponentialRampToValueAtTime(0.18, audioCtx.currentTime + 3);
-      synthGainNode.connect(audioCtx.destination);
-
-      const droneNotes = [130.81, 196.0, 261.63, 329.63]; // C3, G3, C4, E4
-      droneNotes.forEach((freq, idx) => {
-        const osc = audioCtx.createOscillator();
-        const oscGain = audioCtx.createGain();
-        osc.type = idx % 2 === 0 ? 'sine' : 'triangle';
-        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-
-        const lfo = audioCtx.createOscillator();
-        const lfoGain = audioCtx.createGain();
-        lfo.frequency.value = 0.2 + idx * 0.05;
-        lfoGain.gain.value = 1.2;
-        lfo.connect(osc.frequency);
-        lfo.start();
-
-        oscGain.gain.value = 0.25 / droneNotes.length;
-        osc.connect(oscGain);
-        oscGain.connect(synthGainNode);
-        osc.start();
-
-        synthOscillators.push(osc, lfo);
-      });
-    } catch (e) {
-      console.warn('Web Audio synth notice:', e);
-    }
-  }
-
-  function stopIndianSynthRaga() {
-    if (synthGainNode && audioCtx) {
-      try {
-        synthGainNode.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.8);
-        setTimeout(() => {
-          synthOscillators.forEach((o) => {
-            try { o.stop(); } catch (e) {}
-          });
-          synthOscillators = [];
-          synthGainNode = null;
-        }, 850);
-      } catch (e) {
-        synthGainNode = null;
-      }
-    }
-  }
-
-  function playWeddingMusic() {
-    initAudioEngine();
-    if (isAudioMuted) return;
-
-    if (weddingAudio) {
-      weddingAudio.volume = 0;
-      const playPromise = weddingAudio.play();
-      if (playPromise !== undefined) {
-        playPromise.then(() => {
-          let vol = 0;
-          const fadeInterval = setInterval(() => {
-            vol += 0.05;
-            if (vol >= 0.75) {
-              weddingAudio.volume = 0.75;
-              clearInterval(fadeInterval);
-            } else {
-              weddingAudio.volume = vol;
-            }
-          }, 80);
-          updateEqualizerUI(true);
-        }).catch((err) => {
-          console.log('HTML5 audio fallback to Web Audio synth:', err);
-          startIndianSynthRaga();
-          updateEqualizerUI(true);
-        });
-      }
-    }
-  }
-
-  function pauseWeddingMusic() {
-    if (weddingAudio) {
-      weddingAudio.pause();
-    }
-    stopIndianSynthRaga();
-    updateEqualizerUI(false);
-  }
-
-  function updateEqualizerUI(isPlayingAudio) {
-    if (!equalizerBars || !audioStatusText) return;
-    if (isPlayingAudio && !isAudioMuted) {
-      equalizerBars.classList.add('playing');
-      equalizerBars.classList.remove('muted');
-      audioStatusText.textContent = 'Music';
-    } else {
-      equalizerBars.classList.remove('playing');
-      equalizerBars.classList.add('muted');
-      audioStatusText.textContent = 'Muted';
-    }
-  }
-
-  if (audioToggleBtn) {
-    audioToggleBtn.addEventListener('click', () => {
-      isAudioMuted = !isAudioMuted;
-      if (isAudioMuted) {
-        pauseWeddingMusic();
-      } else {
-        playWeddingMusic();
+    interactiveDiya.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        interactiveDiya.click();
       }
     });
   }
@@ -215,27 +106,39 @@ document.addEventListener('DOMContentLoaded', () => {
   // FREEZE FINAL FRAME & REVEAL INVITATION
   // ==========================================================================
   function freezeFinalFrame() {
-    if (video.videoWidth && video.videoHeight) {
-      staticCanvas.width = video.videoWidth;
-      staticCanvas.height = video.videoHeight;
-      canvasCtx.drawImage(video, 0, 0, staticCanvas.width, staticCanvas.height);
-      staticCanvas.classList.add('active');
-      video.pause();
+    try {
+      if (video && video.videoWidth && video.videoHeight && staticCanvas && canvasCtx) {
+        staticCanvas.width = video.videoWidth;
+        staticCanvas.height = video.videoHeight;
+        canvasCtx.drawImage(video, 0, 0, staticCanvas.width, staticCanvas.height);
+        staticCanvas.classList.add('active');
+        video.pause();
+      }
+    } catch (e) {
+      console.warn('Canvas freeze notice:', e);
     }
   }
 
   function revealInvitationContent() {
+    if (autoRevealTimeout) {
+      clearTimeout(autoRevealTimeout);
+      autoRevealTimeout = null;
+    }
+
     freezeFinalFrame();
     hasOpened = true;
     isPlaying = false;
 
     if (lanternsContainer) lanternsContainer.classList.add('revealed');
-    invitationOverlay.classList.remove('hidden');
-    void invitationOverlay.offsetWidth;
-    invitationOverlay.classList.add('revealed');
+    if (invitationOverlay) {
+      invitationOverlay.classList.remove('hidden');
+      void invitationOverlay.offsetWidth;
+      invitationOverlay.classList.add('revealed');
+    }
 
     setTimeout(() => {
       initScratchCanvas();
+      triggerPushpaVrishti();
     }, 150);
   }
 
@@ -246,20 +149,30 @@ document.addEventListener('DOMContentLoaded', () => {
     if (isPlaying || hasOpened) return;
 
     isPlaying = true;
-    playWeddingMusic();
 
-    tapOverlay.classList.add('fade-out');
-    staticCanvas.classList.remove('active');
-    video.currentTime = 0;
+    if (tapOverlay) tapOverlay.classList.add('fade-out');
+    if (staticCanvas) staticCanvas.classList.remove('active');
 
-    const playPromise = video.play();
-    if (playPromise !== undefined) {
-      playPromise.then(() => {
-        // Video playing smoothly to completion
-      }).catch((err) => {
-        console.warn('Video play fallback:', err);
+    // Guaranteed fallback: If video stalls or fails, reveal card within 5.5s
+    autoRevealTimeout = setTimeout(() => {
+      if (!hasOpened) {
         revealInvitationContent();
-      });
+      }
+    }, 5500);
+
+    if (video) {
+      video.currentTime = 0;
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          // Playing video
+        }).catch((err) => {
+          console.warn('Video playback fallback:', err);
+          revealInvitationContent();
+        });
+      }
+    } else {
+      revealInvitationContent();
     }
   }
 
@@ -273,38 +186,64 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  video.addEventListener('timeupdate', () => {
-    if (video.currentTime >= 5.8) {
-      if (lanternsContainer) lanternsContainer.classList.add('revealed');
-    }
-    if (!hasOpened && (video.currentTime >= 5.8 || video.ended)) {
-      revealInvitationContent();
-    }
-  });
+  if (video) {
+    video.addEventListener('timeupdate', () => {
+      // Mid-way threshold transition (doors open fully around 4.8 - 5.5s)
+      if (video.currentTime >= 4.8) {
+        if (lanternsContainer) lanternsContainer.classList.add('revealed');
+      }
+      if (!hasOpened && (video.currentTime >= 5.2 || video.ended)) {
+        revealInvitationContent();
+      }
+    });
 
-  video.addEventListener('ended', () => {
-    freezeFinalFrame();
-    if (!hasOpened) {
+    video.addEventListener('ended', () => {
+      freezeFinalFrame();
+      if (!hasOpened) {
+        revealInvitationContent();
+      }
+    });
+
+    video.addEventListener('error', () => {
+      console.warn('Video element error event');
       revealInvitationContent();
-    }
-  });
+    });
+  }
+
+  // Stage tap backup: If user taps media stage while video is playing, fast forward to invitation
+  if (mediaStage) {
+    mediaStage.addEventListener('click', () => {
+      if (isPlaying && !hasOpened) {
+        revealInvitationContent();
+      }
+    });
+  }
 
   // Reset & Replay
   function resetDoorState() {
+    if (autoRevealTimeout) {
+      clearTimeout(autoRevealTimeout);
+      autoRevealTimeout = null;
+    }
+
     isPlaying = false;
     hasOpened = false;
 
-    video.pause();
-    video.currentTime = 0;
-    staticCanvas.classList.remove('active');
-    invitationOverlay.classList.remove('revealed');
+    if (video) {
+      video.pause();
+      video.currentTime = 0;
+    }
+    if (staticCanvas) staticCanvas.classList.remove('active');
+    if (invitationOverlay) {
+      invitationOverlay.classList.remove('revealed');
+      invitationOverlay.classList.add('hidden');
+    }
 
     if (lanternsContainer) lanternsContainer.classList.remove('revealed');
     if (contentScrollable) contentScrollable.scrollTop = 0;
 
     setTimeout(() => {
-      invitationOverlay.classList.add('hidden');
-      tapOverlay.classList.remove('fade-out');
+      if (tapOverlay) tapOverlay.classList.remove('fade-out');
     }, 400);
   }
 
@@ -330,55 +269,63 @@ document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('scratchContainer');
     if (!container) return;
 
-    const rect = container.getBoundingClientRect();
-    const dpr = window.devicePixelRatio || 1;
-    const w = rect.width || 340;
-    const h = rect.height || 140;
+    try {
+      const rect = container.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      const w = Math.max(280, rect.width || 340);
+      const h = Math.max(110, rect.height || 140);
 
-    scratchCanvas.width = w * dpr;
-    scratchCanvas.height = h * dpr;
-    scratchCanvas.style.width = `${w}px`;
-    scratchCanvas.style.height = `${h}px`;
+      scratchCanvas.width = w * dpr;
+      scratchCanvas.height = h * dpr;
+      scratchCanvas.style.width = `${w}px`;
+      scratchCanvas.style.height = `${h}px`;
 
-    scratchCtx.scale(dpr, dpr);
+      scratchCtx.scale(dpr, dpr);
 
-    const grad = scratchCtx.createLinearGradient(0, 0, w, h);
-    grad.addColorStop(0, '#ECC868');
-    grad.addColorStop(0.3, '#FFF4CE');
-    grad.addColorStop(0.6, '#D4AF37');
-    grad.addColorStop(1, '#996515');
+      const grad = scratchCtx.createLinearGradient(0, 0, w, h);
+      grad.addColorStop(0, '#ECC868');
+      grad.addColorStop(0.28, '#FFF4CE');
+      grad.addColorStop(0.55, '#D4AF37');
+      grad.addColorStop(1, '#996515');
 
-    scratchCtx.fillStyle = grad;
-    scratchCtx.fillRect(0, 0, w, h);
+      scratchCtx.fillStyle = grad;
+      scratchCtx.fillRect(0, 0, w, h);
 
-    // Golden sparkles overlay
-    scratchCtx.fillStyle = 'rgba(255, 255, 255, 0.45)';
-    for (let i = 0; i < 160; i++) {
-      const x = Math.random() * w;
-      const y = Math.random() * h;
-      const r = Math.random() * 2.2 + 0.5;
-      scratchCtx.beginPath();
-      scratchCtx.arc(x, y, r, 0, Math.PI * 2);
-      scratchCtx.fill();
+      // Golden sparkles overlay
+      scratchCtx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+      for (let i = 0; i < 160; i++) {
+        const x = Math.random() * w;
+        const y = Math.random() * h;
+        const r = Math.random() * 2.2 + 0.5;
+        scratchCtx.beginPath();
+        scratchCtx.arc(x, y, r, 0, Math.PI * 2);
+        scratchCtx.fill();
+      }
+
+      scratchCtx.font = '700 12px "Cinzel", serif';
+      scratchCtx.fillStyle = 'rgba(74, 14, 28, 0.9)';
+      scratchCtx.textAlign = 'center';
+      scratchCtx.fillText('✦ SCRATCH GOLD FOIL TO REVEAL DATE ✦', w / 2, h / 2 + 4);
+    } catch (e) {
+      console.warn('Scratch canvas init notice:', e);
     }
-
-    scratchCtx.font = '700 12px "Cinzel", serif';
-    scratchCtx.fillStyle = 'rgba(74, 14, 28, 0.9)';
-    scratchCtx.textAlign = 'center';
-    scratchCtx.fillText('✦ SCRATCH GOLD FOIL TO REVEAL DATE ✦', w / 2, h / 2 + 4);
   }
 
   function scratchAt(x, y) {
     if (!scratchCtx || hasScratchedCleared) return;
 
-    scratchCtx.globalCompositeOperation = 'destination-out';
-    scratchCtx.beginPath();
-    scratchCtx.arc(x, y, 26, 0, Math.PI * 2);
-    scratchCtx.fill();
+    try {
+      scratchCtx.globalCompositeOperation = 'destination-out';
+      scratchCtx.beginPath();
+      scratchCtx.arc(x, y, 28, 0, Math.PI * 2);
+      scratchCtx.fill();
 
-    dragCount++;
-    if (dragCount % 6 === 0) {
-      checkScratchPercentage();
+      dragCount++;
+      if (dragCount % 6 === 0) {
+        checkScratchPercentage();
+      }
+    } catch (e) {
+      console.warn('Scratch draw notice:', e);
     }
   }
 
@@ -401,23 +348,29 @@ document.addEventListener('DOMContentLoaded', () => {
   function checkScratchPercentage() {
     if (hasScratchedCleared || !scratchCtx) return;
 
-    const w = scratchCanvas.width;
-    const h = scratchCanvas.height;
-    const imgData = scratchCtx.getImageData(0, 0, w, h);
-    const pixels = imgData.data;
-    let transparentCount = 0;
+    try {
+      const w = scratchCanvas.width;
+      const h = scratchCanvas.height;
+      if (!w || !h) return;
 
-    for (let i = 3; i < pixels.length; i += 32) {
-      if (pixels[i] === 0) {
-        transparentCount++;
+      const imgData = scratchCtx.getImageData(0, 0, w, h);
+      const pixels = imgData.data;
+      let transparentCount = 0;
+
+      for (let i = 3; i < pixels.length; i += 32) {
+        if (pixels[i] === 0) {
+          transparentCount++;
+        }
       }
-    }
 
-    const totalSampled = pixels.length / 32;
-    const ratio = transparentCount / totalSampled;
+      const totalSampled = pixels.length / 32;
+      const ratio = transparentCount / totalSampled;
 
-    if (ratio > 0.30) {
-      revealDateFully();
+      if (ratio > 0.28) {
+        revealDateFully();
+      }
+    } catch (e) {
+      console.warn('Scratch percentage check notice:', e);
     }
   }
 
@@ -605,13 +558,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // FULLSCREEN PHOTO LIGHTBOX
   // ==========================================================================
   const GALLERY_PHOTOS = [
-    { src: '/assets/gallery/photo-1.webp', label: 'Together · Richa & Akash' },
-    { src: '/assets/gallery/photo-2.webp', label: 'The Bride · Richa' },
-    { src: '/assets/gallery/photo-3.webp', label: 'The Groom · Akash' },
-    { src: '/assets/gallery/photo-4.webp', label: 'Cherished Moments' },
-    { src: '/assets/gallery/photo-5.webp', label: 'Family Blessings' },
-    { src: '/assets/gallery/photo-6.webp', label: 'Celebration of Joy' },
-    { src: '/assets/gallery/photo-7.webp', label: 'Cherished Memories' },
+    { src: '/assets/gallery/photo-1.webp', label: 'Richa & Akash' },
+    { src: '/assets/gallery/photo-2.webp', label: 'Richa' },
+    { src: '/assets/gallery/photo-3.webp', label: 'Akash' },
+    { src: '/assets/gallery/photo-4.webp', label: 'Together' },
+    { src: '/assets/gallery/photo-5.webp', label: 'Forever' },
+    { src: '/assets/gallery/photo-6.webp', label: 'Love' },
+    { src: '/assets/gallery/photo-7.webp', label: 'Always' },
   ];
 
   const lightbox = document.getElementById('lightbox');
@@ -680,9 +633,9 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ==========================================================================
-  // QUICK BLESSINGS & WHATSAPP RSVP DISPATCH
+  // QUICK BLESSINGS & WHATSAPP RSVP DISPATCH (PURE ENGLISH)
   // ==========================================================================
-  let selectedBlessingText = 'Heartiest Congratulations to Richa & Akash! 💐 Wishing you eternal happiness, love and togetherness.';
+  let selectedBlessingText = 'Heartiest Congratulations to Richa & Akash! 💐 Wishing you eternal love, happiness and prosperity on your Tilak ceremony.';
 
   const blessingChips = document.querySelectorAll('.blessing-chip');
   blessingChips.forEach((chip) => {
@@ -698,7 +651,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (whatsappRsvpBtn) {
     whatsappRsvpBtn.addEventListener('click', () => {
       const waNumber = '919876543210';
-      const message = encodeURIComponent(`💐 Royal Tilak & Engagement Wishes 💐\n\n${selectedBlessingText}\n\n— Sent from Digital Invitation for Richa & Akash (18 October 2026) ✨🪔`);
+      const message = encodeURIComponent(`💐 Royal Tilak & Engagement Wishes 💐\n\n${selectedBlessingText}\n\n— Sent from Digital Invitation for Richa Dwivedi & Akash Shukla (Sunday, 18 October 2026) ✨🪔`);
       const waUrl = `https://wa.me/${waNumber}?text=${message}`;
       window.open(waUrl, '_blank', 'noopener,noreferrer');
     });
@@ -725,11 +678,147 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (addToCalendarBtn) {
     addToCalendarBtn.addEventListener('click', () => {
-      const title = encodeURIComponent('Engagement (Tilak) of Richa Dwivedi & Akash Shukla');
-      const details = encodeURIComponent('With the blessings of our families — join us for the Engagement (Tilak) ceremony of Richa Dwivedi and Akash Shukla.');
+      const title = encodeURIComponent('Royal Engagement (Tilak) of Richa Dwivedi & Akash Shukla');
+      const details = encodeURIComponent('With the blessings of our families — join us for the Royal Engagement (Tilak) ceremony of Richa Dwivedi and Akash Shukla.');
       const loc = encodeURIComponent('Yamuna Velly, Near Aliyapur Toll Plaza');
       const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&location=${loc}&dates=${EVENT.calendarStart}/${EVENT.calendarEnd}`;
       window.open(googleCalendarUrl, '_blank', 'noopener,noreferrer');
     });
   }
+
+  // ==========================================================================
+  // PREMIUM SCHEDULE CAROUSEL — Swipe · Drag · Arrow · Dot
+  // ==========================================================================
+  const scheduleTrack    = document.getElementById('scheduleTrack');
+  const scPrevBtn        = document.getElementById('scPrev');
+  const scNextBtn        = document.getElementById('scNext');
+  const scProgressFill   = document.getElementById('scProgressFill');
+  const scDotBtns        = document.querySelectorAll('.sc-dot');
+  const scheduleCards    = document.querySelectorAll('.schedule-card');
+  const SC_TOTAL         = scheduleCards.length; // 4
+
+  let scCurrent  = 0;
+  let scDragStartX = 0;
+  let scDragCurrentX = 0;
+  let scIsDragging = false;
+  let scHasMoved   = false;
+
+  function scGoTo(index) {
+    scCurrent = Math.max(0, Math.min(index, SC_TOTAL - 1));
+
+    // Slide track
+    if (scheduleTrack) {
+      scheduleTrack.style.transform = `translateX(-${scCurrent * 100}%)`;
+    }
+
+    // Progress bar: (current+1)/total * 100
+    if (scProgressFill) {
+      scProgressFill.style.width = `${((scCurrent + 1) / SC_TOTAL) * 100}%`;
+    }
+
+    // Dots
+    scDotBtns.forEach((dot, i) => {
+      dot.classList.toggle('active', i === scCurrent);
+    });
+
+    // Arrow disabled state
+    if (scPrevBtn) scPrevBtn.disabled = scCurrent === 0;
+    if (scNextBtn) scNextBtn.disabled = scCurrent === SC_TOTAL - 1;
+  }
+
+  // Initialise
+  scGoTo(0);
+
+  // Arrow buttons
+  if (scPrevBtn) scPrevBtn.addEventListener('click', () => scGoTo(scCurrent - 1));
+  if (scNextBtn) scNextBtn.addEventListener('click', () => scGoTo(scCurrent + 1));
+
+  // Dot buttons
+  scDotBtns.forEach((dot) => {
+    dot.addEventListener('click', () => {
+      const target = Number(dot.dataset.goto);
+      if (!isNaN(target)) scGoTo(target);
+    });
+  });
+
+  // ── Touch/Swipe ──
+  if (scheduleTrack) {
+    scheduleTrack.addEventListener('touchstart', (e) => {
+      scDragStartX = e.touches[0].clientX;
+      scIsDragging = true;
+      scHasMoved = false;
+    }, { passive: true });
+
+    scheduleTrack.addEventListener('touchmove', (e) => {
+      if (!scIsDragging) return;
+      scDragCurrentX = e.touches[0].clientX;
+      const diff = scDragCurrentX - scDragStartX;
+      if (Math.abs(diff) > 8) {
+        scHasMoved = true;
+        // Live drag feedback (clamped)
+        const baseOffset = -(scCurrent * 100);
+        const dragPercent = (diff / scheduleTrack.offsetWidth) * 100;
+        const clampedDrag = Math.max(-30, Math.min(30, dragPercent));
+        scheduleTrack.style.transition = 'none';
+        scheduleTrack.style.transform = `translateX(calc(${baseOffset}% + ${clampedDrag}%))`;
+      }
+    }, { passive: true });
+
+    scheduleTrack.addEventListener('touchend', () => {
+      scheduleTrack.style.transition = '';
+      if (!scIsDragging || !scHasMoved) { scIsDragging = false; return; }
+      const diff = scDragCurrentX - scDragStartX;
+      const threshold = scheduleTrack.offsetWidth * 0.22;
+      if (diff < -threshold) scGoTo(scCurrent + 1);
+      else if (diff > threshold) scGoTo(scCurrent - 1);
+      else scGoTo(scCurrent); // snap back
+      scIsDragging = false;
+    });
+
+    // ── Mouse drag ──
+    scheduleTrack.addEventListener('mousedown', (e) => {
+      scDragStartX = e.clientX;
+      scIsDragging = true;
+      scHasMoved = false;
+      scheduleTrack.style.cursor = 'grabbing';
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (!scIsDragging) return;
+      scDragCurrentX = e.clientX;
+      const diff = scDragCurrentX - scDragStartX;
+      if (Math.abs(diff) > 6) {
+        scHasMoved = true;
+        const baseOffset = -(scCurrent * 100);
+        const dragPercent = (diff / scheduleTrack.offsetWidth) * 100;
+        const clampedDrag = Math.max(-30, Math.min(30, dragPercent));
+        scheduleTrack.style.transition = 'none';
+        scheduleTrack.style.transform = `translateX(calc(${baseOffset}% + ${clampedDrag}%))`;
+      }
+    });
+
+    document.addEventListener('mouseup', () => {
+      if (!scIsDragging) return;
+      scheduleTrack.style.transition = '';
+      scheduleTrack.style.cursor = '';
+      if (scHasMoved) {
+        const diff = scDragCurrentX - scDragStartX;
+        const threshold = scheduleTrack.offsetWidth * 0.22;
+        if (diff < -threshold) scGoTo(scCurrent + 1);
+        else if (diff > threshold) scGoTo(scCurrent - 1);
+        else scGoTo(scCurrent);
+      }
+      scIsDragging = false;
+    });
+  }
+
+  // Keyboard arrow support within the carousel when focused
+  document.addEventListener('keydown', (e) => {
+    if (lightboxOpen) return; // already handled by lightbox
+    const section = document.getElementById('itinerarySection');
+    if (!section) return;
+    if (e.key === 'ArrowLeft')  scGoTo(scCurrent - 1);
+    if (e.key === 'ArrowRight') scGoTo(scCurrent + 1);
+  });
 });
+
