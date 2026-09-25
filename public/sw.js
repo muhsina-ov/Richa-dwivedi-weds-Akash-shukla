@@ -1,21 +1,14 @@
 // InviteStory - Royal Tilak Invitation Service Worker
-const CACHE_NAME = 'royal-tilak-invite-v5';
+const CACHE_NAME = 'royal-tilak-invite-v7';
 
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
   '/og-image-square.jpg',
   '/og-image.jpg',
-  '/assets/audio/wedding-melody.mp3',
   '/assets/doors/1.mp4',
   '/assets/doors/1.webp',
-  '/assets/gallery/photo-1.webp',
-  '/assets/gallery/photo-2.webp',
-  '/assets/gallery/photo-3.webp',
-  '/assets/gallery/photo-4.webp',
-  '/assets/gallery/photo-5.webp',
-  '/assets/gallery/photo-6.webp',
-  '/assets/gallery/photo-7.webp',
+  '/assets/brand/monogram-black.png',
 ];
 
 // Install Event - Cache Core Shell
@@ -66,7 +59,7 @@ self.addEventListener('fetch', (event) => {
         if (
           networkResponse &&
           networkResponse.status === 200 &&
-          (event.request.url.includes('/assets/') || event.request.url.endsWith('.css') || event.request.url.endsWith('.js') || event.request.url.endsWith('.mp3') || event.request.url.endsWith('.webp') || event.request.url.endsWith('.mp4'))
+          (event.request.url.includes('/assets/') || event.request.url.endsWith('.css') || event.request.url.endsWith('.js') || event.request.url.endsWith('.webp') || event.request.url.endsWith('.mp4') || event.request.url.endsWith('.png'))
         ) {
           const responseToCache = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {

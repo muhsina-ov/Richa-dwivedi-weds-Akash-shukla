@@ -1,5 +1,5 @@
 /* ==========================================================================
-   ROYAL INDIAN WEDDING (TILAK) INVITATION — BULLETPROOF LOGIC & AUDIO ENGINE
+   ROYAL INDIAN WEDDING (TILAK) INVITATION — BULLETPROOF LOGIC & DOOR OPENING ENGINE
    Richa Dwivedi & Akash Shukla — Pure English Ultra-Luxury Edition
    ========================================================================== */
 
@@ -29,6 +29,10 @@ document.addEventListener('DOMContentLoaded', () => {
   let isPlaying = false;
   let hasOpened = false;
   let autoRevealTimeout = null;
+
+  // ==========================================================================
+  // NO MUSIC — customer explicitly requested a silent invitation.
+  // ==========================================================================
 
   // ==========================================================================
   // EVENT CONSTANTS
@@ -143,8 +147,33 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ==========================================================================
-  // DOOR OPENING SEQUENCE
+  // DOOR OPENING SEQUENCE (existing template assets: /assets/doors/1.*)
+  // --------------------------------------------------------------------------
+  // Timeline of doors/1.mp4 (10s, 720x1280):
+  //   0.0 - 2.5s  closed door
+  //   2.5 - 5.0s  doors swinging apart
+  //   5.0 - 6.2s  doors pass the camera, scene revealed
+  //   6.2 - 10.0s camera push-in hold
   // ==========================================================================
+  const DOOR_LANTERN_AT = 5.0;
+  const DOOR_REVEAL_AT = 6.2;
+  const DOOR_SAFETY_MS = 7500;
+
+  function runCSSFallbackDoorAnimation() {
+    // Reuses the same template door still when the video cannot play.
+    if (mediaStage) {
+      mediaStage.classList.add('css-door-opening');
+    }
+    setTimeout(() => {
+      if (lanternsContainer) lanternsContainer.classList.add('revealed');
+    }, 900);
+    setTimeout(() => {
+      if (!hasOpened) {
+        revealInvitationContent();
+      }
+    }, 2100);
+  }
+
   function openDoorInvitation() {
     if (isPlaying || hasOpened) return;
 
@@ -153,27 +182,44 @@ document.addEventListener('DOMContentLoaded', () => {
     if (tapOverlay) tapOverlay.classList.add('fade-out');
     if (staticCanvas) staticCanvas.classList.remove('active');
 
-    // Guaranteed fallback: If video stalls or fails, reveal card within 5.5s
+    // Guaranteed fallback: if the video stalls or never reaches the end,
+    // reveal the invitation instead of leaving the door stuck.
     autoRevealTimeout = setTimeout(() => {
       if (!hasOpened) {
         revealInvitationContent();
       }
-    }, 5500);
+    }, DOOR_SAFETY_MS);
 
-    if (video) {
-      video.currentTime = 0;
-      const playPromise = video.play();
-      if (playPromise !== undefined) {
-        playPromise.then(() => {
-          // Playing video
-        }).catch((err) => {
-          console.warn('Video playback fallback:', err);
-          revealInvitationContent();
-        });
-      }
-    } else {
-      revealInvitationContent();
+    if (!video) {
+      runCSSFallbackDoorAnimation();
+      return;
     }
+
+    try {
+      video.currentTime = 0;
+    } catch (e) {
+      // Seeking before metadata is available — playback will still start.
+    }
+
+    let playPromise;
+    try {
+      playPromise = video.play();
+    } catch (e) {
+      runCSSFallbackDoorAnimation();
+      return;
+    }
+
+    if (playPromise === undefined) {
+      // Very old browsers: no promise to inspect, rely on timeupdate/ended.
+      return;
+    }
+
+    playPromise.then(() => {
+      // Playing normally — timeupdate/ended will finish the sequence.
+    }).catch(() => {
+      // Autoplay/format blocked — fall back to the CSS door using the same asset.
+      if (!hasOpened) runCSSFallbackDoorAnimation();
+    });
   }
 
   if (tapOverlay) {
@@ -188,32 +234,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (video) {
     video.addEventListener('timeupdate', () => {
-      // Mid-way threshold transition (doors open fully around 4.8 - 5.5s)
-      if (video.currentTime >= 4.8) {
+      if (!isPlaying || hasOpened) return;
+      // Lanterns fade in as the light spills through the opening doors
+      if (video.currentTime >= DOOR_LANTERN_AT) {
         if (lanternsContainer) lanternsContainer.classList.add('revealed');
       }
-      if (!hasOpened && (video.currentTime >= 5.2 || video.ended)) {
+      // Reveal only once the doors have fully swung out of frame
+      if (video.currentTime >= DOOR_REVEAL_AT) {
         revealInvitationContent();
       }
     });
 
     video.addEventListener('ended', () => {
-      freezeFinalFrame();
       if (!hasOpened) {
         revealInvitationContent();
       }
     });
 
+    // A stalled decode during playback must not leave the door stuck
     video.addEventListener('error', () => {
-      console.warn('Video element error event');
-      revealInvitationContent();
+      if (isPlaying && !hasOpened) {
+        runCSSFallbackDoorAnimation();
+      }
     });
   }
 
-  // Stage tap backup: If user taps media stage while video is playing, fast forward to invitation
+  // Tap-to-skip backup. The tap overlay is a child of the media stage, so a tap
+  // that starts the door also bubbles here — only honour taps that land on the
+  // stage itself, otherwise the opening animation is skipped on the first tap.
   if (mediaStage) {
-    mediaStage.addEventListener('click', () => {
-      if (isPlaying && !hasOpened) {
+    mediaStage.addEventListener('click', (e) => {
+      if (!isPlaying || hasOpened) return;
+      if (e.target !== mediaStage) return;
+      if (video && typeof video.currentTime === 'number' && video.duration) {
+        try { video.currentTime = Math.max(0, video.duration - 0.15); } catch (err) { /* ignore */ }
+      } else {
         revealInvitationContent();
       }
     });
@@ -231,16 +286,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (video) {
       video.pause();
-      video.currentTime = 0;
+      try { video.currentTime = 0; } catch (e) { /* ignore */ }
     }
     if (staticCanvas) staticCanvas.classList.remove('active');
     if (invitationOverlay) {
       invitationOverlay.classList.remove('revealed');
       invitationOverlay.classList.add('hidden');
     }
-
+    if (mediaStage) mediaStage.classList.remove('css-door-opening');
     if (lanternsContainer) lanternsContainer.classList.remove('revealed');
     if (contentScrollable) contentScrollable.scrollTop = 0;
+
+    // Re-arm the scratch card so the replayed invitation is fully usable
+    hasScratchedCleared = false;
+    dragCount = 0;
+    if (scratchCanvas) scratchCanvas.classList.remove('fade-out');
+    if (scratchHint) scratchHint.style.opacity = '';
+    if (quickRevealBtn) quickRevealBtn.style.display = '';
 
     setTimeout(() => {
       if (tapOverlay) tapOverlay.classList.remove('fade-out');
@@ -555,87 +617,9 @@ document.addEventListener('DOMContentLoaded', () => {
   setInterval(updateCountdown, 1000);
 
   // ==========================================================================
-  // FULLSCREEN PHOTO LIGHTBOX
-  // ==========================================================================
-  const GALLERY_PHOTOS = [
-    { src: '/assets/gallery/photo-1.webp', label: 'Richa & Akash' },
-    { src: '/assets/gallery/photo-2.webp', label: 'Richa' },
-    { src: '/assets/gallery/photo-3.webp', label: 'Akash' },
-    { src: '/assets/gallery/photo-4.webp', label: 'Together' },
-    { src: '/assets/gallery/photo-5.webp', label: 'Forever' },
-    { src: '/assets/gallery/photo-6.webp', label: 'Love' },
-    { src: '/assets/gallery/photo-7.webp', label: 'Always' },
-  ];
-
-  const lightbox = document.getElementById('lightbox');
-  const lightboxImg = document.getElementById('lightboxImg');
-  const lightboxCounter = document.getElementById('lightboxCounter');
-  const lightboxLabel = document.getElementById('lightboxLabel');
-  const lightboxClose = document.getElementById('lightboxClose');
-  const lightboxPrev = document.getElementById('lightboxPrev');
-  const lightboxNext = document.getElementById('lightboxNext');
-
-  let lightboxOpen = false;
-  let currentPhotoIndex = 0;
-
-  function renderLightbox() {
-    const photo = GALLERY_PHOTOS[currentPhotoIndex];
-    if (photo && lightboxImg) {
-      lightboxImg.src = photo.src;
-      lightboxCounter.textContent = `${currentPhotoIndex + 1} / ${GALLERY_PHOTOS.length}`;
-      lightboxLabel.textContent = photo.label;
-    }
-  }
-
-  function openLightbox(index) {
-    currentPhotoIndex = index % GALLERY_PHOTOS.length;
-    lightboxOpen = true;
-    lightbox.classList.add('is-open');
-    lightbox.setAttribute('aria-hidden', 'false');
-    renderLightbox();
-  }
-
-  function closeLightbox() {
-    lightboxOpen = false;
-    lightbox.classList.remove('is-open');
-    lightbox.setAttribute('aria-hidden', 'true');
-    if (lightboxImg) lightboxImg.src = '';
-  }
-
-  function stepLightbox(direction) {
-    currentPhotoIndex = (currentPhotoIndex + direction + GALLERY_PHOTOS.length) % GALLERY_PHOTOS.length;
-    renderLightbox();
-  }
-
-  document.addEventListener('click', (e) => {
-    const trigger = e.target.closest('[data-gallery-index]');
-    if (trigger) {
-      const index = Number(trigger.dataset.galleryIndex);
-      if (!Number.isNaN(index)) openLightbox(index);
-    }
-  });
-
-  if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
-  if (lightboxPrev) lightboxPrev.addEventListener('click', () => stepLightbox(-1));
-  if (lightboxNext) lightboxNext.addEventListener('click', () => stepLightbox(1));
-
-  if (lightbox) {
-    lightbox.addEventListener('click', (e) => {
-      if (e.target === lightbox) closeLightbox();
-    });
-  }
-
-  document.addEventListener('keydown', (e) => {
-    if (!lightboxOpen) return;
-    if (e.key === 'Escape') closeLightbox();
-    if (e.key === 'ArrowLeft') stepLightbox(-1);
-    if (e.key === 'ArrowRight') stepLightbox(1);
-  });
-
-  // ==========================================================================
   // QUICK BLESSINGS & WHATSAPP RSVP DISPATCH (PURE ENGLISH)
   // ==========================================================================
-  let selectedBlessingText = 'Heartiest Congratulations to Richa & Akash! 💐 Wishing you eternal love, happiness and prosperity on your Tilak ceremony.';
+  let selectedBlessingText = 'Heartiest Congratulations to Akash & Richa! 💐 Wishing you eternal love, happiness and prosperity on your Tilak ceremony.';
 
   const blessingChips = document.querySelectorAll('.blessing-chip');
   blessingChips.forEach((chip) => {
@@ -650,7 +634,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (whatsappRsvpBtn) {
     whatsappRsvpBtn.addEventListener('click', () => {
-      const waNumber = '919876543210';
+      const waNumber = '917571019962';
       const message = encodeURIComponent(`💐 Royal Tilak & Engagement Wishes 💐\n\n${selectedBlessingText}\n\n— Sent from Digital Invitation for Richa Dwivedi & Akash Shukla (Sunday, 18 October 2026) ✨🪔`);
       const waUrl = `https://wa.me/${waNumber}?text=${message}`;
       window.open(waUrl, '_blank', 'noopener,noreferrer');
@@ -678,8 +662,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (addToCalendarBtn) {
     addToCalendarBtn.addEventListener('click', () => {
-      const title = encodeURIComponent('Royal Engagement (Tilak) of Richa Dwivedi & Akash Shukla');
-      const details = encodeURIComponent('With the blessings of our families — join us for the Royal Engagement (Tilak) ceremony of Richa Dwivedi and Akash Shukla.');
+      const title = encodeURIComponent('Royal Engagement (Tilak) of Akash Shukla & Richa Dwivedi');
+      const details = encodeURIComponent('With the blessings of our families — join us for the Royal Engagement (Tilak) ceremony of Akash Shukla and Richa Dwivedi.');
       const loc = encodeURIComponent('Yamuna Velly, Near Aliyapur Toll Plaza');
       const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&location=${loc}&dates=${EVENT.calendarStart}/${EVENT.calendarEnd}`;
       window.open(googleCalendarUrl, '_blank', 'noopener,noreferrer');
@@ -710,7 +694,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const scProgressFill   = document.getElementById('scProgressFill');
   const scDotBtns        = document.querySelectorAll('.sc-dot');
   const scheduleCards    = document.querySelectorAll('.schedule-card');
-  const SC_TOTAL         = scheduleCards.length; // 4
+  const SC_TOTAL         = scheduleCards.length; // 5
 
   let scCurrent  = 0;
   let scDragStartX = 0;
@@ -829,7 +813,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Keyboard arrow support within the carousel when focused
   document.addEventListener('keydown', (e) => {
-    if (lightboxOpen) return; // already handled by lightbox
     const section = document.getElementById('itinerarySection');
     if (!section) return;
     if (e.key === 'ArrowLeft')  scGoTo(scCurrent - 1);

@@ -9,3 +9,6 @@ worker-configuration.d.ts
 .env
 .env.local
 
+
+# Local debug frame dumps from door-video inspection
+scratch/
